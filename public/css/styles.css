@@ -1,0 +1,1244 @@
+/*
+ * SafeStart Security Dashboard - Stylesheet
+ * 
+ * This CSS file controls all the visual styling of the dashboard.
+ * 
+ * TABLE OF CONTENTS:
+ * 1. Reset & Base Styles
+ * 2. CSS Variables (Colors, Sizes)
+ * 3. Body & App Container
+ * 4. Left Sidebar (Logo, Navigation, Score Card)
+ * 5. Main Content Area (Header, Summary, Domain Grid, Bottom Section)
+ * 6. Right Sidebar (Chart, Recommendations, Download)
+ * 7. Responsive Design
+ */
+
+
+/* ==========================================================================
+   1. RESET & BASE STYLES
+   ==========================================================================
+   
+   Removes default browser styling so everything looks the same
+   across Chrome, Firefox, Edge, Safari, etc.
+   
+   - margin: 0        → Removes default spacing around elements
+   - padding: 0       → Removes default spacing inside elements
+   - box-sizing       → Makes width/height include padding and borders
+   ========================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* ==========================================================================
+   2. CSS VARIABLES (Custom Properties)
+   ==========================================================================
+   
+   Defines all colors and sizes in one place for easy changes.
+   Using var(--name) anywhere in the CSS will use these values.
+   
+   Instead of writing #0a0e1a, write var(--bg-primary).
+   This makes it easy to change colors later.
+   
+   COLOR GUIDE:
+   - bg-*        → Background colors (dark theme)
+   - text-*      → Text colors (white, gray, muted)
+   - accent-*    → Bright highlight colors (blue, green, red, etc.)
+   ========================================================================== */
+
+:root {
+  /* Background Colors - The dark colors used for the background */
+  --bg-primary: #0a0e1a;       /* Darkest - Main page background */
+  --bg-secondary: #111827;     /* Slightly lighter - Right sidebar background */
+  --bg-card: #1a2234;          /* Card backgrounds - Used for all cards/boxes */
+  --bg-card-hover: #1e2942;    /* When you hover over a card */
+  
+  /* Text Colors - Colors for all text on the page */
+  --text-primary: #ffffff;     /* White - Main text, headings */
+  --text-secondary: #9ca3af;   /* Light gray - Secondary text */
+  --text-muted: #6b7280;       /* Darker gray - Labels, hints */
+  
+  /* Accent Colors - Bright colors for highlights and status */
+  --accent-blue: #3b82f6;      /* Primary action color - Buttons, links */
+  --accent-green: #10b981;     /* Success/Good - High scores, completed tasks */
+  --accent-cyan: #06b6d4;      /* Information - Highlights */
+  --accent-purple: #8b5cf6;    /* Alternative accent - Some domain cards */
+  --accent-orange: #f59e0b;    /* Warning - Medium priority, scheduled items */
+  --accent-red: #ef4444;       /* Error/Urgent - High priority, pending items */
+  
+  /* Layout Sizes - Widths for the sidebars and borders */
+  --border-color: #1f2937;     /* Border color - Used on all cards/dividers */
+  --sidebar-width: 240px;      /* Left sidebar width */
+  --right-sidebar-width: 320px; /* Right sidebar width */
+}
+
+
+/* ==========================================================================
+   3. BODY & APP CONTAINER
+   ==========================================================================
+   
+   Sets up the main page layout.
+   
+   USED BY:
+   - <body> tag in index.html
+   - <div class="app-container"> wraps the entire dashboard
+   ========================================================================== */
+
+/* The entire page background and default text settings */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* The main wrapper: Left Sidebar | Main Content | Right Sidebar
+   display: flex → Places the 3 sections side by side horizontally */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* ==========================================================================
+   4. LEFT SIDEBAR
+   ==========================================================================
+   
+   The narrow dark panel on the left side of the screen.
+   Contains: Logo, Navigation Menu, Security Score Card
+   
+   USED IN: <aside class="sidebar"> in index.html
+   ========================================================================== */
+
+/* The entire left sidebar panel
+   position: fixed → Stays in place when you scroll
+   height: 100vh   → Takes full screen height */
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, #0f172a 0%, #0a0e1a 100%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+
+/* --------------------------------------------------------------------------
+   LOGO SECTION
+   --------------------------------------------------------------------------
+   The SafeStart logo at the top of the left sidebar.
+   Contains: Shield icon + "SafeStart" text + "Security Check" tagline
+   -------------------------------------------------------------------------- */
+
+/* Holds the icon and text side by side */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+/* The green/cyan gradient square with the shield icon */
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-cyan) 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+/* The "SafeStart" name and "Security Check" tagline */
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.logo-tagline {
+  font-size: 11px;
+  color: var(--accent-cyan);
+  font-weight: 500;
+}
+
+
+/* --------------------------------------------------------------------------
+   NAVIGATION MENU
+   --------------------------------------------------------------------------
+   The menu links (Dashboard, Assessment, Results, etc.)
+   USED IN: <nav class="nav-menu"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* Holds all the navigation links stacked vertically */
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Each clickable menu item (Dashboard, Assessment, etc.) */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* Hover state - when mouse moves over a menu item */
+.nav-item:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* Active state - the currently selected menu item (Dashboard by default) */
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.05) 100%);
+  color: var(--accent-blue);
+  border-left: 3px solid var(--accent-blue);
+  margin-left: -3px;
+}
+
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+
+/* --------------------------------------------------------------------------
+   SECURITY SCORE CARD
+   --------------------------------------------------------------------------
+   The circular score display at the bottom of the left sidebar.
+   Shows: 82% score with "Low Risk" badge
+   USED IN: <div class="security-score-card"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* The card that holds the circular score and risk info
+   margin-top: auto → Pushes it to the bottom of the sidebar */
+.security-score-card {
+  margin-top: auto;
+  background: linear-gradient(135deg, #1a2234 0%, #0f172a 100%);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.security-score-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+/* The circular progress indicator showing 82%
+   Uses SVG for the ring shape */
+.score-circle {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 16px;
+}
+
+.score-circle svg {
+  transform: rotate(-90deg);  /* Start progress from top instead of right */
+  width: 100%;
+  height: 100%;
+}
+
+/* The gray background circle (the unfilled part) */
+.score-bg {
+  fill: none;
+  stroke: var(--bg-card);
+  stroke-width: 8;
+}
+
+/* The green filled part showing 82%
+   stroke-dasharray and stroke-dashoffset control how much is filled */
+.score-progress {
+  fill: none;
+  stroke: var(--accent-green);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease;
+}
+
+/* The big number in the center of the circle - "82%" */
+.score-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: baseline;
+}
+
+.score-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent-green);
+}
+
+.score-percent {
+  font-size: 16px;
+  color: var(--accent-green);
+}
+
+/* The "Low Risk" badge below the score circle */
+.risk-label {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Green styling for "Low Risk" badge */
+.risk-label.low {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent-green);
+}
+
+/* Shows "Last Assessment" with timestamp */
+.last-assessment {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.last-assessment strong {
+  color: var(--text-secondary);
+}
+
+
+/* ==========================================================================
+   5. MAIN CONTENT AREA
+   ==========================================================================
+   
+   The center section of the dashboard.
+   Contains: Header, Assessment Summary, Domain Grid, Action Plan, Activity
+   
+   USED IN: <main class="main-content"> in index.html
+   ========================================================================== */
+
+/* The middle section between the two sidebars */
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  margin-right: var(--right-sidebar-width);
+  padding: 20px 30px;
+  background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0a0e1a 100%);
+}
+
+
+/* --------------------------------------------------------------------------
+   HEADER
+   --------------------------------------------------------------------------
+   The top bar with tagline, buttons, and user profile
+   USED IN: <header class="header"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* Horizontal bar with tagline on left, actions on right */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* "Evaluate · Improve · Protect" text on the left */
+.header-tagline {
+  font-size: 14px;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+}
+
+/* Container for buttons and user profile on the right */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Small square buttons (theme toggle, notifications) */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.icon-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* The red "3" circle on the bell icon */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  background: var(--accent-red);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+
+/* --------------------------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------------------------
+   Styled buttons throughout the dashboard
+   USED IN: <button class="btn btn-primary">, etc. in index.html
+   -------------------------------------------------------------------------- */
+
+/* Common styles for all buttons */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Primary Button (Blue) - Main action buttons like "Generate Report" */
+.btn-primary {
+  background: var(--accent-blue);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Success Button (Green) - Positive action buttons */
+.btn-success {
+  background: var(--accent-green);
+  color: white;
+}
+
+.btn-success:hover {
+  background: #059669;
+}
+
+
+/* --------------------------------------------------------------------------
+   USER PROFILE
+   --------------------------------------------------------------------------
+   The user avatar and name in the header
+   USED IN: <div class="user-profile"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* Holds avatar and name side by side */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+/* The circular profile picture placeholder */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+/* "Issa Bathily" text next to avatar */
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+
+/* --------------------------------------------------------------------------
+   CONTENT HEADER (Title Section)
+   --------------------------------------------------------------------------
+   The main title and illustration below the header
+   Contains: "Cybersecurity Risk Assessment" title and SVG illustration
+   USED IN: <div class="content-header"> in index.html
+   -------------------------------------------------------------------------- */
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+/* The H1 title with gradient color effect */
+.title-section h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #ffffff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-section p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* The small SVG graphic on the right side */
+.header-illustration {
+  width: 120px;
+  height: 80px;
+}
+
+.header-illustration svg {
+  width: 100%;
+  height: 100%;
+}
+
+
+/* --------------------------------------------------------------------------
+   ASSESSMENT SUMMARY
+   --------------------------------------------------------------------------
+   The 4-column summary bar showing:
+   Total Questions | Completed | Score | Risk Level
+   USED IN: <div class="assessment-summary"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* Grid layout with 4 equal columns */
+.assessment-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+}
+
+/* Each column (Total Questions, Completed, etc.) */
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* The small gray label text (e.g., "TOTAL QUESTIONS") */
+.summary-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* The big number (e.g., "35" or "82") */
+.summary-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Secondary text like "/35" or "/ 100" */
+.summary-sub {
+  font-size: 18px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Green checkmark next to "35/35" */
+.check-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent-green);
+}
+
+/* The "Low Risk" badge in the summary */
+.risk-badge {
+  display: inline-flex;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.risk-badge.low {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+
+/* --------------------------------------------------------------------------
+   DOMAIN PERFORMANCE GRID
+   --------------------------------------------------------------------------
+   The 8 cards showing scores for each security domain:
+   Access Control, Network Security, Endpoint Security, etc.
+   USED IN: <div class="domain-performance"> in index.html
+   -------------------------------------------------------------------------- */
+
+.domain-performance {
+  margin-bottom: 24px;
+}
+
+.domain-performance h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+/* 4-column grid for the domain cards */
+.domain-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Each individual domain card (Access Control 90%, etc.)
+   NOTE: Each card has a custom --domain-color variable for its accent color */
+.domain-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+/* Hover state - lifts up slightly when you hover */
+.domain-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+/* The domain label (e.g., "Access Control") */
+.domain-name {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* The big percentage number (e.g., "90%")
+   Uses the --domain-color variable set on each card */
+.domain-score {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--domain-color);
+  margin-bottom: 8px;
+}
+
+/* The gray bar behind the progress */
+.domain-bar {
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* The colored progress bar
+   Width is set via inline style (e.g., style="width: 90%") */
+.domain-fill {
+  height: 100%;
+  background: var(--domain-color);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+
+/* --------------------------------------------------------------------------
+   BOTTOM SECTION (Action Plan & Recent Activity)
+   --------------------------------------------------------------------------
+   Two side-by-side panels at the bottom of the main content
+   - Action Plan: Tasks to complete
+   - Recent Activity: Timeline of events
+   USED IN: <div class="bottom-section"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* Two-column grid for action plan and activity */
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Shared card styling for both panels */
+.action-plan,
+.recent-activity {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.action-plan h3,
+.recent-activity h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+/* Vertical list of items */
+.action-list,
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* ACTION PLAN ITEMS
+   USED IN: <div class="action-item completed|pending|scheduled"> */
+
+/* Each task row (Enable MFA, Update firewall, etc.) */
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+/* The circle indicator on the left of each action */
+.action-status {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Completed action - Green circle with white checkmark */
+.action-item.completed .action-status {
+  background: var(--accent-green);
+}
+
+.action-item.completed .action-status svg {
+  width: 14px;
+  height: 14px;
+  color: white;
+}
+
+/* Pending action - Red bordered circle with red dot */
+.action-item.pending .action-status {
+  background: transparent;
+  border: 2px solid var(--accent-red);
+}
+
+.action-item.pending .status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-red);
+  border-radius: 50%;
+}
+
+/* Scheduled action - Orange bordered circle with orange dot */
+.action-item.scheduled .action-status {
+  background: transparent;
+  border: 2px solid var(--accent-orange);
+}
+
+.action-item.scheduled .status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-orange);
+  border-radius: 50%;
+}
+
+/* The text content (title and due date) */
+.action-content {
+  flex: 1;
+}
+
+.action-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.action-due {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.action-due strong {
+  color: var(--accent-cyan);
+}
+
+/* "View All →" link at bottom of action plan */
+.view-all {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--accent-blue);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+
+/* RECENT ACTIVITY ITEMS
+   USED IN: <div class="activity-item"> in index.html */
+
+/* Each activity row (Assessment Completed, Risk Score Updated, etc.) */
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+/* Blue icon box on the left */
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-blue);
+}
+
+/* The activity description */
+.activity-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+/* The timestamp (10:45 AM, etc.) */
+.activity-time {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+
+/* ==========================================================================
+   6. RIGHT SIDEBAR
+   ==========================================================================
+   
+   The panel on the right side of the screen.
+   Contains: Risk Breakdown Chart, Recommendations, Download Report
+   
+   USED IN: <aside class="right-sidebar"> in index.html
+   ========================================================================== */
+
+/* Fixed position on the right side of the screen */
+.right-sidebar {
+  width: var(--right-sidebar-width);
+  background: var(--bg-secondary);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: fixed;
+  right: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-left: 1px solid var(--border-color);
+}
+
+/* Shared styling for all cards in right sidebar */
+.risk-breakdown,
+.recommendations,
+.download-report {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.risk-breakdown h3,
+.recommendations h3,
+.download-report h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+
+/* --------------------------------------------------------------------------
+   RISK BREAKDOWN CHART
+   --------------------------------------------------------------------------
+   The donut chart showing risk distribution by domain
+   The chart is drawn with JavaScript on <canvas id="riskChart">
+   USED IN: <div class="risk-breakdown"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* Centers the donut chart */
+.breakdown-chart {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* The HTML canvas where the chart is drawn with JavaScript */
+#riskChart {
+  max-width: 150px;
+  max-height: 150px;
+}
+
+/* The list of domains with colored dots below the chart */
+.breakdown-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Each row: colored dot + domain name + percentage */
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* The colored dot indicating domain color
+   Color is set via inline style (e.g., style="background: #f59e0b") */
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+
+/* --------------------------------------------------------------------------
+   RECOMMENDATIONS
+   --------------------------------------------------------------------------
+   List of security recommendations with priority badges
+   USED IN: <div class="recommendations"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* Title and priority filter dropdown */
+.recommendations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.recommendations-header h3 {
+  margin-bottom: 0;
+}
+
+/* The "Priority" dropdown to filter recommendations */
+.priority-filter {
+  padding: 6px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Container for all recommendation items */
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Each recommendation row */
+.recommendation-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+/* Blue icon on the left of each recommendation */
+.recommendation-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.recommendation-icon svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-blue);
+}
+
+/* The recommendation description */
+.recommendation-text {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* The HIGH/MEDIUM/LOW badge on the right */
+.priority-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* High priority badge - Red for urgent items */
+.priority-badge.high {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accent-red);
+}
+
+/* Medium priority badge - Orange for important items */
+.priority-badge.medium {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accent-orange);
+}
+
+/* Low priority badge - Green for nice-to-have items */
+.priority-badge.low {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-green);
+}
+
+
+/* --------------------------------------------------------------------------
+   DOWNLOAD REPORT
+   --------------------------------------------------------------------------
+   Export buttons for PDF, CSV, Email and full report
+   USED IN: <div class="download-report"> in index.html
+   -------------------------------------------------------------------------- */
+
+/* 3-column grid for PDF, CSV, Email buttons */
+.download-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* Individual download format button */
+.download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-blue);
+}
+
+.download-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* PDF button hover - Red highlight */
+.download-btn.pdf:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+/* CSV button hover - Green highlight */
+.download-btn.csv:hover {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+/* Email button hover - Blue highlight */
+.download-btn.email:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* Large green button at the bottom */
+.full-report-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+}
+
+
+/* ==========================================================================
+   7. RESPONSIVE DESIGN
+   ==========================================================================
+   
+   Adjusts the layout for different screen sizes.
+   
+   @media (max-width: XXXpx) means "when the screen is narrower than XXX pixels"
+   The styles inside that block will override the default styles.
+   ========================================================================== */
+
+/* Large tablets / small laptops (up to 1400px wide)
+   Slightly narrower sidebars, 2 columns for domain grid */
+@media (max-width: 1400px) {
+  :root {
+    --sidebar-width: 220px;
+    --right-sidebar-width: 280px;
+  }
+  
+  .domain-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets (up to 1200px wide)
+   Right sidebar moves below content */
+@media (max-width: 1200px) {
+  .right-sidebar {
+    position: static;
+    width: 100%;
+  }
+  
+  .main-content {
+    margin-right: 0;
+  }
+  
+  .app-container {
+    flex-wrap: wrap;
+  }
+}
+
+/* Mobile phones (up to 768px wide)
+   Single column layout, hide left sidebar */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+  
+  .assessment-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .domain-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   END OF STYLESHEET
+   ==========================================================================
+   
+   SUMMARY:
+   - Total sections: 7 major sections
+   - index.html uses the class names defined here
+   - main.js adds/removes classes dynamically (like 'active' on nav items)
+   - Some styles use CSS variables that could be changed for theming
+   ========================================================================== */
