@@ -1,782 +1,878 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SafeStart Security Check - Assessment</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!DOCTYPE html> <!-- Declares this as HTML5 document -->
+<html lang="en"> <!-- Root element with English language setting -->
+<head> <!-- Head section contains metadata and styles -->
+  <meta charset="UTF-8"> <!-- Sets character encoding to UTF-8 for special characters -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes page responsive on mobile devices -->
+  <title>SafeStart Security Check - Assessment</title> <!-- Browser tab title -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"> <!-- Imports Inter font from Google Fonts -->
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ========================================== */
+    /* START OF INTERNAL CSS STYLES              */
+    /* ========================================== */
     
-    body {
-      min-height: 100vh;
-      background: #071225;
-      color: #ffffff;
-      font-family: Inter, Arial, sans-serif;
+    * { box-sizing: border-box; margin: 0; padding: 0; } /* Universal reset - includes padding in width, removes default margins/padding */
+    
+    body { /* Main body styling */
+      min-height: 100vh; /* Minimum height is full viewport height */
+      background: #071225; /* Dark navy blue background color */
+      color: #ffffff; /* White text color */
+      font-family: Inter, Arial, sans-serif; /* Use Inter font, fallback to Arial */
     }
 
-    .app-shell {
-      display: flex;
-      min-height: 100vh;
+    .app-shell { /* Main container wrapping sidebar and content */
+      display: flex; /* Uses flexbox for side-by-side layout */
+      min-height: 100vh; /* Takes full viewport height */
     }
 
-    /* Sidebar */
+    /* Sidebar - Left navigation panel */
     .sidebar {
-      width: 280px;
-      background: #0a1730;
-      border-right: 1px solid rgba(255,255,255,0.08);
-      padding: 24px 16px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      overflow-y: auto;
+      width: 280px; /* Fixed width of 280 pixels */
+      background: #0a1730; /* Slightly lighter navy background */
+      border-right: 1px solid rgba(255,255,255,0.08); /* Subtle right border */
+      padding: 24px 16px; /* Top/bottom 24px, left/right 16px padding */
+      position: fixed; /* Stays fixed while scrolling */
+      top: 0; /* Positioned at top */
+      left: 0; /* Positioned at left edge */
+      height: 100vh; /* Full viewport height */
+      overflow-y: auto; /* Enables vertical scrolling if content overflows */
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+    .brand { /* Brand logo and name container */
+      display: flex; /* Horizontal layout */
+      align-items: center; /* Vertically center items */
+      gap: 12px; /* 12px space between icon and text */
+      margin-bottom: 24px; /* Space below brand section */
     }
 
-    .brand-icon {
-      width: 46px;
-      height: 46px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 16px;
-      background: rgba(16,185,129,0.14);
-      color: #34d399;
-      font-size: 24px;
+    .brand-icon { /* Shield icon container */
+      width: 46px; /* Icon box width */
+      height: 46px; /* Icon box height */
+      display: flex; /* Center icon inside */
+      align-items: center; /* Vertical centering */
+      justify-content: center; /* Horizontal centering */
+      border-radius: 16px; /* Rounded corners */
+      background: rgba(16,185,129,0.14); /* Semi-transparent green background */
+      color: #34d399; /* Green icon color */
+      font-size: 24px; /* Icon size */
     }
 
-    .brand-title {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 700;
+    .brand-title { /* "SafeStart" text */
+      margin: 0; /* Remove default margins */
+      font-size: 20px; /* Text size */
+      font-weight: 700; /* Bold weight */
     }
 
-    .brand-subtitle {
-      margin: 2px 0 0;
-      color: #94a3b8;
-      font-size: 13px;
+    .brand-subtitle { /* "Security Check" text */
+      margin: 2px 0 0; /* Small top margin */
+      color: #94a3b8; /* Gray muted color */
+      font-size: 13px; /* Smaller text */
     }
 
-    .surface {
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
-      border-radius: 24px;
+    .surface { /* Base card/panel style - glassmorphism effect */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle white border */
+      background: rgba(255,255,255,0.04); /* Very transparent white background */
+      border-radius: 24px; /* Large rounded corners */
     }
 
-    .surface-pad { padding: 18px; }
+    .surface-pad { padding: 18px; } /* Adds padding to surface cards */
 
-    .progress-label, .eyebrow, .metric-label {
-      color: #94a3b8;
-      font-size: 11px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
+    .progress-label, .eyebrow, .metric-label { /* Small uppercase labels */
+      color: #94a3b8; /* Gray muted color */
+      font-size: 11px; /* Small text */
+      letter-spacing: .2em; /* Wide letter spacing */
+      text-transform: uppercase; /* All caps */
     }
 
-    .big-number {
-      font-size: 42px;
-      font-weight: 700;
-      margin: 10px 0;
+    .big-number { /* Large statistic numbers (like "0%") */
+      font-size: 42px; /* Very large text */
+      font-weight: 700; /* Bold */
+      margin: 10px 0; /* Vertical spacing */
     }
 
-    .bar {
-      height: 8px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 999px;
-      overflow: hidden;
-      margin: 12px 0;
+    .bar { /* Progress bar container */
+      height: 8px; /* Bar height */
+      background: rgba(255,255,255,0.08); /* Dark track background */
+      border-radius: 999px; /* Fully rounded (pill shape) */
+      overflow: hidden; /* Clips the fill inside */
+      margin: 12px 0; /* Vertical spacing */
     }
 
-    .bar > span {
-      display: block;
-      height: 100%;
-      background: linear-gradient(90deg, #22c55e, #3b82f6);
-      transition: width .25s ease;
+    .bar > span { /* Progress bar fill */
+      display: block; /* Block element */
+      height: 100%; /* Fill full height of bar */
+      background: linear-gradient(90deg, #22c55e, #3b82f6); /* Green to blue gradient */
+      transition: width .25s ease; /* Smooth animation when width changes */
     }
 
-    .muted-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      color: #94a3b8;
-      font-size: 13px;
+    .muted-row { /* Row with space-between items in gray */
+      display: flex; /* Horizontal layout */
+      justify-content: space-between; /* Push items to opposite ends */
+      gap: 12px; /* Minimum gap between items */
+      color: #94a3b8; /* Gray muted color */
+      font-size: 13px; /* Small text */
     }
 
-    .section-list {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .section-list { /* Container for sidebar section items */
+      margin-top: 20px; /* Space above the list */
+      display: flex; /* Flexbox layout */
+      flex-direction: column; /* Stack items vertically */
+      gap: 10px; /* Space between section items */
     }
 
-    .section-item {
-      padding: 14px;
-      cursor: pointer;
-      transition: .2s ease;
+    .section-item { /* Individual section item in sidebar */
+      padding: 14px; /* Inner padding */
+      cursor: pointer; /* Shows hand cursor on hover */
+      transition: .2s ease; /* Smooth hover animation */
     }
 
-    .section-item:hover {
-      background: rgba(255,255,255,0.06);
+    .section-item:hover { /* Hover state for section items */
+      background: rgba(255,255,255,0.06); /* Slightly lighter background on hover */
     }
 
-    .section-item.active {
-      background: rgba(59,130,246,0.12);
-      border-color: rgba(59,130,246,0.35);
+    .section-item.active { /* Currently active/selected section */
+      background: rgba(59,130,246,0.12); /* Blue tinted background */
+      border-color: rgba(59,130,246,0.35); /* Blue border */
     }
 
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+    .section-header { /* Header inside section item */
+      display: flex; /* Horizontal layout */
+      justify-content: space-between; /* Title on left, pill on right */
+      align-items: center; /* Vertically centered */
+      gap: 10px; /* Space between elements */
     }
 
-    .section-title {
-      font-weight: 600;
-      margin-bottom: 4px;
+    .section-title { /* Section name text */
+      font-weight: 600; /* Semi-bold */
+      margin-bottom: 4px; /* Space below */
     }
 
-    .section-meta {
-      font-size: 12px;
-      color: #94a3b8;
+    .section-meta { /* "X/Y complete" text under section title */
+      font-size: 12px; /* Small text */
+      color: #94a3b8; /* Gray muted color */
     }
 
-    .pill {
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.05);
-      white-space: nowrap;
+    .pill { /* Small rounded badge/tag */
+      padding: 7px 12px; /* Inner padding */
+      border-radius: 999px; /* Fully rounded (pill shape) */
+      font-size: 12px; /* Small text */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle border */
+      background: rgba(255,255,255,0.05); /* Slight white background */
+      white-space: nowrap; /* Prevent text wrapping */
     }
 
-    .pill.low { background: rgba(16,185,129,0.14); color: #34d399; border-color: rgba(16,185,129,0.28); }
-    .pill.medium { background: rgba(245,158,11,0.14); color: #fbbf24; border-color: rgba(245,158,11,0.28); }
-    .pill.high { background: rgba(239,68,68,0.14); color: #f87171; border-color: rgba(239,68,68,0.28); }
+    .pill.low { /* Low risk pill - green color scheme */
+      background: rgba(16,185,129,0.14); /* Light green background */
+      color: #34d399; /* Green text */
+      border-color: rgba(16,185,129,0.28); /* Green border */
+    }
+    .pill.medium { /* Medium risk pill - yellow color scheme */
+      background: rgba(245,158,11,0.14); /* Light yellow background */
+      color: #fbbf24; /* Yellow text */
+      border-color: rgba(245,158,11,0.28); /* Yellow border */
+    }
+    .pill.high { /* High risk pill - red color scheme */
+      background: rgba(239,68,68,0.14); /* Light red background */
+      color: #f87171; /* Red text */
+      border-color: rgba(239,68,68,0.28); /* Red border */
+    }
 
-    /* Main Content */
+    /* Main Content - Right side of the page */
     .content {
-      flex: 1;
-      margin-left: 280px;
-      padding: 24px;
+      flex: 1; /* Takes remaining space after sidebar */
+      margin-left: 280px; /* Offset by sidebar width */
+      padding: 24px; /* Inner padding */
     }
 
-    .grid-top, .grid-main {
-      display: grid;
-      gap: 24px;
-      grid-template-columns: 1.6fr .9fr;
+    .grid-top, .grid-main { /* Two-column grid layouts */
+      display: grid; /* CSS Grid layout */
+      gap: 24px; /* Space between grid items */
+      grid-template-columns: 1.6fr .9fr; /* Left column wider than right */
     }
 
-    .hero {
-      background: linear-gradient(135deg, rgba(14,27,53,0.98), rgba(6,17,35,0.96));
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 24px;
+    .hero { /* Main hero/header section at top */
+      background: linear-gradient(135deg, rgba(14,27,53,0.98), rgba(6,17,35,0.96)); /* Dark gradient background */
+      border-radius: 28px; /* Large rounded corners */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle border */
+      padding: 24px; /* Inner padding */
     }
 
-    .hero-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
+    .hero-top { /* Top portion of hero with title and actions */
+      display: flex; /* Horizontal layout */
+      justify-content: space-between; /* Title left, actions right */
+      gap: 20px; /* Space between items */
+      flex-wrap: wrap; /* Wraps on smaller screens */
     }
 
-    .hero-title {
-      margin: 8px 0 10px;
-      font-size: 42px;
-      line-height: 1.1;
+    .hero-title { /* "Cybersecurity Assessment" heading */
+      margin: 8px 0 10px; /* Vertical spacing */
+      font-size: 42px; /* Large text */
+      line-height: 1.1; /* Tight line height */
     }
 
-    .hero-desc, .tip-text, .section-description, .note-text {
-      color: #94a3b8;
+    .hero-desc, .tip-text, .section-description, .note-text { /* Gray descriptive text styles */
+      color: #94a3b8; /* Gray muted color */
     }
 
-    .actions {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      flex-wrap: wrap;
+    .actions { /* Container for action buttons */
+      display: flex; /* Horizontal layout */
+      gap: 12px; /* Space between buttons */
+      align-items: flex-start; /* Align to top */
+      flex-wrap: wrap; /* Wrap on small screens */
     }
 
-    .btn {
-      border: none;
-      border-radius: 18px;
-      background: #2563eb;
-      color: #fff;
-      padding: 12px 18px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.2s;
+    .btn { /* Primary button style */
+      border: none; /* Remove default border */
+      border-radius: 18px; /* Rounded corners */
+      background: #2563eb; /* Blue background */
+      color: #fff; /* White text */
+      padding: 12px 18px; /* Inner padding */
+      font-weight: 600; /* Semi-bold text */
+      cursor: pointer; /* Hand cursor */
+      font-size: 14px; /* Text size */
+      transition: background 0.2s; /* Smooth hover transition */
     }
 
-    .btn:hover { background: #1d4ed8; }
+    .btn:hover { background: #1d4ed8; } /* Darker blue on hover */
 
-    .btn.secondary {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
+    .btn.secondary { /* Secondary button variant */
+      background: rgba(255,255,255,0.06); /* Transparent background */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle border */
     }
 
-    .btn.secondary:hover { background: rgba(255,255,255,0.1); }
+    .btn.secondary:hover { background: rgba(255,255,255,0.1); } /* Lighter on hover */
 
-    .btn:disabled {
-      opacity: .5;
-      cursor: not-allowed;
+    .btn:disabled { /* Disabled button state */
+      opacity: .5; /* Semi-transparent */
+      cursor: not-allowed; /* Not-allowed cursor */
     }
 
-    .metrics {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+    .metrics { /* Container for 4 metric cards */
+      margin-top: 18px; /* Space above */
+      display: grid; /* Grid layout */
+      grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+      gap: 14px; /* Space between cards */
     }
 
-    .metric-card {
-      padding: 16px;
-      border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
+    .metric-card { /* Individual metric card */
+      padding: 16px; /* Inner padding */
+      border-radius: 24px; /* Rounded corners */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle border */
+      background: rgba(255,255,255,0.03); /* Very slight white background */
     }
 
-    .metric-value {
-      display: block;
-      margin-top: 12px;
-      font-size: 28px;
-      font-weight: 700;
-      line-height: 1.2;
+    .metric-value { /* Large number in metric card */
+      display: block; /* Block element */
+      margin-top: 12px; /* Space above */
+      font-size: 28px; /* Large text */
+      font-weight: 700; /* Bold */
+      line-height: 1.2; /* Tight line height */
     }
 
-    .card-title {
-      margin: 0 0 16px;
-      font-size: 24px;
+    .card-title { /* Card heading text */
+      margin: 0 0 16px; /* Bottom margin only */
+      font-size: 24px; /* Medium-large text */
     }
 
-    .summary-list, .recommend-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .summary-list, .recommend-list { /* Vertical list containers */
+      display: flex; /* Flexbox layout */
+      flex-direction: column; /* Stack items vertically */
+      gap: 12px; /* Space between items */
     }
 
-    .summary-item, .recommend-item, .answer-option {
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      border-radius: 18px;
-      padding: 14px;
+    .summary-item, .recommend-item, .answer-option { /* Card-like list items */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle border */
+      background: rgba(255,255,255,0.03); /* Very slight background */
+      border-radius: 18px; /* Rounded corners */
+      padding: 14px; /* Inner padding */
     }
 
-    .question-card {
-      border: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(180deg, rgba(13,27,53,0.88), rgba(8,18,36,0.98));
-      border-radius: 28px;
-      padding: 24px;
-      margin-top: 20px;
+    .question-card { /* Main question display card */
+      border: 1px solid rgba(255,255,255,0.08); /* Subtle border */
+      background: linear-gradient(180deg, rgba(13,27,53,0.88), rgba(8,18,36,0.98)); /* Vertical gradient */
+      border-radius: 28px; /* Large rounded corners */
+      padding: 24px; /* Inner padding */
+      margin-top: 20px; /* Space above */
     }
 
-    .question-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 18px;
+    .question-header { /* Question icon and text container */
+      display: flex; /* Horizontal layout */
+      align-items: flex-start; /* Align to top */
+      gap: 14px; /* Space between icon and text */
+      margin-bottom: 18px; /* Space below */
     }
 
-    .question-icon {
-      min-width: 48px;
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 16px;
-      background: rgba(59,130,246,0.14);
-      font-size: 22px;
+    .question-icon { /* Emoji icon container */
+      min-width: 48px; /* Fixed minimum width */
+      width: 48px; /* Icon box width */
+      height: 48px; /* Icon box height */
+      display: flex; /* Center icon */
+      align-items: center; /* Vertical centering */
+      justify-content: center; /* Horizontal centering */
+      border-radius: 16px; /* Rounded corners */
+      background: rgba(59,130,246,0.14); /* Light blue background */
+      font-size: 22px; /* Icon size */
     }
 
-    .question-title {
-      line-height: 1.5;
-      margin: 0;
-      font-size: 28px;
+    .question-title { /* Question text */
+      line-height: 1.5; /* Line height for readability */
+      margin: 0; /* Remove default margin */
+      font-size: 28px; /* Large text */
     }
 
-    .answer-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .answer-list { /* Container for answer options */
+      display: flex; /* Flexbox layout */
+      flex-direction: column; /* Stack vertically */
+      gap: 12px; /* Space between options */
     }
 
-    .answer-option {
-      cursor: pointer;
-      transition: .2s ease;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
+    .answer-option { /* Individual answer choice */
+      cursor: pointer; /* Hand cursor on hover */
+      transition: .2s ease; /* Smooth hover animation */
+      display: flex; /* Horizontal layout */
+      justify-content: space-between; /* Radio/label left, score right */
+      gap: 12px; /* Space between elements */
+      align-items: center; /* Vertically centered */
     }
 
-    .answer-option:hover { background: rgba(255,255,255,0.06); }
+    .answer-option:hover { background: rgba(255,255,255,0.06); } /* Lighter on hover */
 
-    .answer-option.selected {
-      background: rgba(59,130,246,0.12);
-      border-color: rgba(59,130,246,0.35);
+    .answer-option.selected { /* Selected answer state */
+      background: rgba(59,130,246,0.12); /* Blue tinted background */
+      border-color: rgba(59,130,246,0.35); /* Blue border */
     }
 
-    .option-left {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
+    .option-left { /* Left side of answer option (radio + label) */
+      display: flex; /* Horizontal layout */
+      gap: 12px; /* Space between radio and label */
+      align-items: flex-start; /* Align to top */
     }
 
-    .option-radio {
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      border: 2px solid rgba(255,255,255,0.35);
-      margin-top: 3px;
-      position: relative;
-      flex-shrink: 0;
+    .option-radio { /* Custom radio button */
+      width: 18px; /* Radio width */
+      height: 18px; /* Radio height */
+      border-radius: 999px; /* Fully circular */
+      border: 2px solid rgba(255,255,255,0.35); /* White border */
+      margin-top: 3px; /* Align with text */
+      position: relative; /* For inner dot positioning */
+      flex-shrink: 0; /* Don't shrink */
     }
 
-    .option-radio.selected {
-      border-color: #60a5fa;
+    .option-radio.selected { /* Selected radio state */
+      border-color: #60a5fa; /* Blue border */
     }
 
-    .option-radio.selected::after {
-      content: "";
-      position: absolute;
-      inset: 3px;
-      background: #60a5fa;
-      border-radius: 999px;
+    .option-radio.selected::after { /* Blue dot inside selected radio */
+      content: ""; /* Empty content */
+      position: absolute; /* Position inside radio */
+      inset: 3px; /* 3px from all edges */
+      background: #60a5fa; /* Blue fill */
+      border-radius: 999px; /* Circular */
     }
 
-    .option-label {
-      font-weight: 600;
+    .option-label { /* Answer option text */
+      font-weight: 600; /* Semi-bold */
     }
 
-    .option-score {
-      background: rgba(255,255,255,0.06);
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      color: #cbd5e1;
-      white-space: nowrap;
+    .option-score { /* Points badge on answer option */
+      background: rgba(255,255,255,0.06); /* Slight background */
+      padding: 6px 10px; /* Inner padding */
+      border-radius: 999px; /* Pill shape */
+      font-size: 12px; /* Small text */
+      color: #cbd5e1; /* Light gray color */
+      white-space: nowrap; /* No wrapping */
     }
 
-    .question-actions {
-      margin-top: 20px;
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
+    .question-actions { /* Navigation buttons container */
+      margin-top: 20px; /* Space above */
+      display: flex; /* Horizontal layout */
+      justify-content: space-between; /* Prev left, status center, next right */
+      gap: 14px; /* Space between items */
+      align-items: center; /* Vertically centered */
+      flex-wrap: wrap; /* Wrap on small screens */
     }
 
-    .recommend-item {
-      display: flex;
-      gap: 12px;
+    .recommend-item { /* Individual recommendation card */
+      display: flex; /* Horizontal layout */
+      gap: 12px; /* Space between icon and text */
     }
 
-    .recommend-icon {
-      font-size: 18px;
-      line-height: 1.3;
+    .recommend-icon { /* Recommendation emoji icon */
+      font-size: 18px; /* Icon size */
+      line-height: 1.3; /* Line height */
     }
 
-    .sidebar-tip {
-      margin-top: 20px;
+    .sidebar-tip { /* Quick tip card in sidebar */
+      margin-top: 20px; /* Space above */
     }
 
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #94a3b8;
-      text-decoration: none;
-      font-size: 14px;
-      margin-bottom: 16px;
+    .back-link { /* "← Back to Dashboard" link */
+      display: inline-flex; /* Inline horizontal layout */
+      align-items: center; /* Vertically centered */
+      gap: 8px; /* Space between arrow and text */
+      color: #94a3b8; /* Gray color */
+      text-decoration: none; /* No underline */
+      font-size: 14px; /* Text size */
+      margin-bottom: 16px; /* Space below */
     }
 
-    .back-link:hover { color: #fff; }
+    .back-link:hover { color: #fff; } /* White on hover */
 
-    @media (max-width: 1200px) {
-      .sidebar { display: none; }
-      .content { margin-left: 0; }
-      .grid-top, .grid-main { grid-template-columns: 1fr; }
+    @media (max-width: 1200px) { /* Tablet/medium screen breakpoint */
+      .sidebar { display: none; } /* Hide sidebar on smaller screens */
+      .content { margin-left: 0; } /* Remove left margin when sidebar hidden */
+      .grid-top, .grid-main { grid-template-columns: 1fr; } /* Single column layout */
     }
 
-    @media (max-width: 900px) {
-      .metrics { grid-template-columns: repeat(2, 1fr); }
-      .hero-title { font-size: 34px; }
-      .question-title { font-size: 24px; }
+    @media (max-width: 900px) { /* Smaller tablet breakpoint */
+      .metrics { grid-template-columns: repeat(2, 1fr); } /* 2 columns instead of 4 */
+      .hero-title { font-size: 34px; } /* Smaller hero title */
+      .question-title { font-size: 24px; } /* Smaller question text */
     }
 
-    @media (max-width: 600px) {
-      .content { padding: 14px; }
-      .metrics { grid-template-columns: 1fr; }
-      .hero, .surface-pad, .question-card { padding: 18px; }
-      .hero-title { font-size: 28px; }
-      .question-title { font-size: 20px; }
+    @media (max-width: 600px) { /* Mobile phone breakpoint */
+      .content { padding: 14px; } /* Less padding on mobile */
+      .metrics { grid-template-columns: 1fr; } /* Single column metrics */
+      .hero, .surface-pad, .question-card { padding: 18px; } /* Reduced padding */
+      .hero-title { font-size: 28px; } /* Even smaller hero title */
+      .question-title { font-size: 20px; } /* Smaller question text */
     }
+    
+    /* ========================================== */
+    /* END OF CSS STYLES                         */
+    /* ========================================== */
   </style>
-</head>
-<body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-icon">🛡️</div>
-        <div>
-          <h2 class="brand-title">SafeStart</h2>
-          <p class="brand-subtitle">Security Check</p>
+</head> <!-- End of head section -->
+<body> <!-- Start of page body -->
+  <div class="app-shell"> <!-- Main app container with sidebar + content -->
+    <aside class="sidebar"> <!-- Left sidebar navigation panel -->
+      <div class="brand"> <!-- Brand logo section -->
+        <div class="brand-icon">🛡️</div> <!-- Shield emoji icon -->
+        <div> <!-- Brand text container -->
+          <h2 class="brand-title">SafeStart</h2> <!-- App name -->
+          <p class="brand-subtitle">Security Check</p> <!-- App tagline -->
         </div>
-      </div>
+      </div> <!-- End brand section -->
 
-      <div class="surface surface-pad">
-        <div class="progress-label">Assessment Progress</div>
-        <div class="big-number" id="sidebar-progress">0%</div>
-        <div class="bar"><span id="sidebar-bar" style="width: 0%"></span></div>
-        <div class="muted-row">
-          <span id="sidebar-answered">0/10 answered</span>
-          <span id="sidebar-risk">Low Risk</span>
+      <div class="surface surface-pad"> <!-- Progress card -->
+        <div class="progress-label">Assessment Progress</div> <!-- Label -->
+        <div class="big-number" id="sidebar-progress">0%</div> <!-- Shows completion percentage -->
+        <div class="bar"><span id="sidebar-bar" style="width: 0%"></span></div> <!-- Visual progress bar -->
+        <div class="muted-row"> <!-- Stats row -->
+          <span id="sidebar-answered">0/10 answered</span> <!-- Questions answered count -->
+          <span id="sidebar-risk">Low Risk</span> <!-- Current risk level -->
         </div>
-      </div>
+      </div> <!-- End progress card -->
 
-      <div class="section-list" id="section-list"></div>
+      <div class="section-list" id="section-list"></div> <!-- Container for section navigation items (populated by JS) -->
 
-      <div class="surface surface-pad sidebar-tip">
-        <h4 style="margin: 0 0 8px">Quick tip</h4>
-        <p class="tip-text" style="margin: 0; line-height: 1.5">
+      <div class="surface surface-pad sidebar-tip"> <!-- Quick tip card -->
+        <h4 style="margin: 0 0 8px">Quick tip</h4> <!-- Tip heading -->
+        <p class="tip-text" style="margin: 0; line-height: 1.5"> <!-- Tip content -->
           Complete the high-impact controls first to improve your final score faster.
         </p>
       </div>
-    </aside>
+    </aside> <!-- End sidebar -->
 
-    <main class="content">
-      <a href="index.html" class="back-link">← Back to Dashboard</a>
+    <main class="content"> <!-- Main content area -->
+      <a href="index.html" class="back-link">← Back to Dashboard</a> <!-- Navigation back to dashboard -->
 
-      <div class="grid-top">
-        <section class="hero">
-          <div class="hero-top">
-            <div>
-              <div class="eyebrow">Evaluate • Improve • Protect</div>
-              <h1 class="hero-title">Cybersecurity Assessment</h1>
-              <p class="hero-desc">
+      <div class="grid-top"> <!-- Top grid section with hero and summary -->
+        <section class="hero"> <!-- Hero banner section -->
+          <div class="hero-top"> <!-- Hero header with title and actions -->
+            <div> <!-- Left side - text content -->
+              <div class="eyebrow">Evaluate • Improve • Protect</div> <!-- Small tagline -->
+              <h1 class="hero-title">Cybersecurity Assessment</h1> <!-- Main heading -->
+              <p class="hero-desc"> <!-- Description paragraph -->
                 Answer a guided set of questions to assess your current security posture and generate actionable recommendations.
               </p>
             </div>
-            <div class="actions">
-              <span class="pill low" id="header-risk">Low Risk</span>
-              <button class="btn" onclick="generateReport()">Generate Report</button>
+            <div class="actions"> <!-- Right side - buttons -->
+              <span class="pill low" id="header-risk">Low Risk</span> <!-- Risk level badge -->
+              <button class="btn" onclick="generateReport()">Generate Report</button> <!-- Report generation button -->
             </div>
-          </div>
+          </div> <!-- End hero-top -->
 
-          <div class="metrics">
-            <div class="metric-card">
-              <div class="metric-label">Total Questions</div>
-              <div class="metric-value" id="total-questions">10</div>
+          <div class="metrics"> <!-- 4-card metrics grid -->
+            <div class="metric-card"> <!-- Total questions card -->
+              <div class="metric-label">Total Questions</div> <!-- Label -->
+              <div class="metric-value" id="total-questions">10</div> <!-- Value -->
             </div>
-            <div class="metric-card">
-              <div class="metric-label">Completed</div>
-              <div class="metric-value" id="completed-count">0/10</div>
+            <div class="metric-card"> <!-- Completed questions card -->
+              <div class="metric-label">Completed</div> <!-- Label -->
+              <div class="metric-value" id="completed-count">0/10</div> <!-- Value - updated by JS -->
             </div>
-            <div class="metric-card">
-              <div class="metric-label">Score</div>
-              <div class="metric-value" id="overall-score">0/100</div>
+            <div class="metric-card"> <!-- Overall score card -->
+              <div class="metric-label">Score</div> <!-- Label -->
+              <div class="metric-value" id="overall-score">0/100</div> <!-- Value - updated by JS -->
             </div>
-            <div class="metric-card">
-              <div class="metric-label">Current Section</div>
-              <div class="metric-value" id="current-section" style="font-size: 18px">Access Control</div>
+            <div class="metric-card"> <!-- Current section card -->
+              <div class="metric-label">Current Section</div> <!-- Label -->
+              <div class="metric-value" id="current-section" style="font-size: 18px">Access Control</div> <!-- Value - updated by JS -->
             </div>
-          </div>
-        </section>
+          </div> <!-- End metrics -->
+        </section> <!-- End hero -->
 
-        <section class="surface surface-pad">
-          <h3 class="card-title">Live Summary</h3>
-          <div class="summary-item">
-            <div class="muted-row">
-              <span>Overall posture</span>
-              <strong id="summary-score">0%</strong>
+        <section class="surface surface-pad"> <!-- Live summary card -->
+          <h3 class="card-title">Live Summary</h3> <!-- Card heading -->
+          <div class="summary-item"> <!-- Overall posture summary -->
+            <div class="muted-row"> <!-- Label and value row -->
+              <span>Overall posture</span> <!-- Label -->
+              <strong id="summary-score">0%</strong> <!-- Score value -->
             </div>
-            <div class="bar"><span id="summary-bar" style="width: 0%"></span></div>
+            <div class="bar"><span id="summary-bar" style="width: 0%"></span></div> <!-- Progress bar -->
           </div>
-          <div class="summary-list" id="section-scores"></div>
-        </section>
-      </div>
+          <div class="summary-list" id="section-scores"></div> <!-- Container for per-section scores (populated by JS) -->
+        </section> <!-- End live summary -->
+      </div> <!-- End grid-top -->
 
-      <div class="grid-main" style="margin-top: 24px">
-        <section class="surface surface-pad">
-          <div style="display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start">
-            <div>
-              <div style="color: #93c5fd; font-size: 14px" id="section-label">Section 1 of 5</div>
-              <h2 style="margin: 8px 0 10px; font-size: 32px" id="section-title">Access Control</h2>
-              <p class="section-description" style="margin-bottom: 0" id="section-desc">
+      <div class="grid-main" style="margin-top: 24px"> <!-- Bottom grid section -->
+        <section class="surface surface-pad"> <!-- Question section panel -->
+          <div style="display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start"> <!-- Section header -->
+            <div> <!-- Left side - section info -->
+              <div style="color: #93c5fd; font-size: 14px" id="section-label">Section 1 of 5</div> <!-- Section counter -->
+              <h2 style="margin: 8px 0 10px; font-size: 32px" id="section-title">Access Control</h2> <!-- Section name -->
+              <p class="section-description" style="margin-bottom: 0" id="section-desc"> <!-- Section description -->
                 Review user authentication, permissions, and account protection settings.
               </p>
             </div>
-            <span class="pill" id="question-badge">Question 1 of 10</span>
-          </div>
+            <span class="pill" id="question-badge">Question 1 of 10</span> <!-- Question counter badge -->
+          </div> <!-- End section header -->
 
-          <div class="question-card" id="question-card">
-            <div class="question-header">
-              <div class="question-icon" id="question-icon">🔐</div>
-              <div>
-                <div class="eyebrow" style="margin-bottom: 6px">Assessment Question</div>
-                <h3 class="question-title" id="question-text">Loading...</h3>
+          <div class="question-card" id="question-card"> <!-- Question display card -->
+            <div class="question-header"> <!-- Question header with icon -->
+              <div class="question-icon" id="question-icon">🔐</div> <!-- Section emoji icon -->
+              <div> <!-- Question text container -->
+                <div class="eyebrow" style="margin-bottom: 6px">Assessment Question</div> <!-- Small label -->
+                <h3 class="question-title" id="question-text">Loading...</h3> <!-- Question text (updated by JS) -->
               </div>
             </div>
-            <div class="answer-list" id="answer-list"></div>
-          </div>
+            <div class="answer-list" id="answer-list"></div> <!-- Container for answer options (populated by JS) -->
+          </div> <!-- End question-card -->
 
-          <div class="question-actions">
-            <button class="btn secondary" id="btn-prev" onclick="goPrev()">← Previous</button>
-            <div class="note-text" id="answer-status">Select one option to continue</div>
-            <button class="btn" id="btn-next" onclick="goNext()">Next →</button>
+          <div class="question-actions"> <!-- Navigation buttons row -->
+            <button class="btn secondary" id="btn-prev" onclick="goPrev()">← Previous</button> <!-- Previous question button -->
+            <div class="note-text" id="answer-status">Select one option to continue</div> <!-- Answer status text -->
+            <button class="btn" id="btn-next" onclick="goNext()">Next →</button> <!-- Next question button -->
           </div>
-        </section>
+        </section> <!-- End question section -->
 
-        <div style="display: flex; flex-direction: column; gap: 24px">
-          <section class="surface surface-pad">
-            <h3 class="card-title">Recommendations</h3>
-            <div class="recommend-list" id="recommendations"></div>
+        <div style="display: flex; flex-direction: column; gap: 24px"> <!-- Right column container -->
+          <section class="surface surface-pad"> <!-- Recommendations card -->
+            <h3 class="card-title">Recommendations</h3> <!-- Card heading -->
+            <div class="recommend-list" id="recommendations"></div> <!-- Container for recommendations (populated by JS) -->
           </section>
 
-          <section class="surface surface-pad">
-            <h3 class="card-title">Assessment Notes</h3>
-            <p class="note-text">• Same dark premium style as your dashboard.</p>
-            <p class="note-text">• Step-by-step assessment flow instead of only summary cards.</p>
-            <p class="note-text">• You can connect this screen with your results and reports pages.</p>
+          <section class="surface surface-pad"> <!-- Assessment notes card -->
+            <h3 class="card-title">Assessment Notes</h3> <!-- Card heading -->
+            <p class="note-text">• Same dark premium style as your dashboard.</p> <!-- Note 1 -->
+            <p class="note-text">• Step-by-step assessment flow instead of only summary cards.</p> <!-- Note 2 -->
+            <p class="note-text">• You can connect this screen with your results and reports pages.</p> <!-- Note 3 -->
           </section>
-        </div>
-      </div>
-    </main>
-  </div>
+        </div> <!-- End right column -->
+      </div> <!-- End grid-main -->
+    </main> <!-- End main content -->
+  </div> <!-- End app-shell -->
 
-  <script>
-    const sections = [
+  <script> <!-- Start of JavaScript code -->
+    // ==========================================
+    // SECTION DATA - Contains all assessment sections and questions
+    // ==========================================
+    const sections = [ // Array of all assessment sections
       {
-        id: "access-control",
-        title: "Access Control",
-        description: "Review user authentication, permissions, and account protection settings.",
-        icon: "🔐",
-        questions: [
-          { id: 1, text: "Do all users have multi-factor authentication enabled?", options: [{ label: "Yes, for all users", score: 100 }, { label: "Enabled for some users", score: 60 }, { label: "Not enabled", score: 20 }] },
-          { id: 2, text: "Are admin accounts separated from standard user accounts?", options: [{ label: "Yes", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] },
+        id: "access-control", // Unique identifier for the section
+        title: "Access Control", // Display name of the section
+        description: "Review user authentication, permissions, and account protection settings.", // Section description
+        icon: "🔐", // Emoji icon for the section
+        questions: [ // Array of questions in this section
+          { id: 1, text: "Do all users have multi-factor authentication enabled?", options: [{ label: "Yes, for all users", score: 100 }, { label: "Enabled for some users", score: 60 }, { label: "Not enabled", score: 20 }] }, // Question 1 with answer options and scores
+          { id: 2, text: "Are admin accounts separated from standard user accounts?", options: [{ label: "Yes", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] }, // Question 2
         ],
       },
       {
-        id: "network-security",
+        id: "network-security", // Network security section
         title: "Network Security",
         description: "Check firewall rules, segmentation, remote access, and perimeter defenses.",
         icon: "🌐",
         questions: [
-          { id: 3, text: "Is your firewall configuration reviewed regularly?", options: [{ label: "Monthly or better", score: 100 }, { label: "Quarterly", score: 70 }, { label: "Rarely / Never", score: 30 }] },
-          { id: 4, text: "Do you use a VPN for remote access?", options: [{ label: "Yes, enforced", score: 100 }, { label: "Used by some staff", score: 60 }, { label: "No", score: 20 }] },
+          { id: 3, text: "Is your firewall configuration reviewed regularly?", options: [{ label: "Monthly or better", score: 100 }, { label: "Quarterly", score: 70 }, { label: "Rarely / Never", score: 30 }] }, // Question 3
+          { id: 4, text: "Do you use a VPN for remote access?", options: [{ label: "Yes, enforced", score: 100 }, { label: "Used by some staff", score: 60 }, { label: "No", score: 20 }] }, // Question 4
         ],
       },
       {
-        id: "data-protection",
+        id: "data-protection", // Data protection section
         title: "Data Protection",
         description: "Evaluate backup coverage, encryption, retention, and sensitive data handling.",
         icon: "🗄️",
         questions: [
-          { id: 5, text: "Is sensitive business data encrypted at rest?", options: [{ label: "Yes", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] },
-          { id: 6, text: "Are backups tested on a scheduled basis?", options: [{ label: "Monthly", score: 100 }, { label: "Occasionally", score: 60 }, { label: "Never", score: 15 }] },
+          { id: 5, text: "Is sensitive business data encrypted at rest?", options: [{ label: "Yes", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] }, // Question 5
+          { id: 6, text: "Are backups tested on a scheduled basis?", options: [{ label: "Monthly", score: 100 }, { label: "Occasionally", score: 60 }, { label: "Never", score: 15 }] }, // Question 6
         ],
       },
       {
-        id: "awareness",
+        id: "awareness", // Security awareness section
         title: "Security Awareness",
         description: "Measure employee training, phishing readiness, and policy awareness.",
         icon: "👥",
         questions: [
-          { id: 7, text: "Do employees receive phishing or security awareness training?", options: [{ label: "Every quarter", score: 100 }, { label: "Once a year", score: 65 }, { label: "No formal training", score: 20 }] },
-          { id: 8, text: "Are staff aware of how to report a suspicious email or device issue?", options: [{ label: "Yes", score: 100 }, { label: "Some teams only", score: 60 }, { label: "No", score: 20 }] },
+          { id: 7, text: "Do employees receive phishing or security awareness training?", options: [{ label: "Every quarter", score: 100 }, { label: "Once a year", score: 65 }, { label: "No formal training", score: 20 }] }, // Question 7
+          { id: 8, text: "Are staff aware of how to report a suspicious email or device issue?", options: [{ label: "Yes", score: 100 }, { label: "Some teams only", score: 60 }, { label: "No", score: 20 }] }, // Question 8
         ],
       },
       {
-        id: "monitoring",
+        id: "monitoring", // Monitoring & response section
         title: "Monitoring & Response",
         description: "Understand log visibility, alerting, and incident handling maturity.",
         icon: "👁️",
         questions: [
-          { id: 9, text: "Do you actively monitor login failures and suspicious activity?", options: [{ label: "Yes, centralized monitoring", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] },
-          { id: 10, text: "Do you have an incident response process documented?", options: [{ label: "Yes, documented and tested", score: 100 }, { label: "Documented only", score: 70 }, { label: "No", score: 20 }] },
+          { id: 9, text: "Do you actively monitor login failures and suspicious activity?", options: [{ label: "Yes, centralized monitoring", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] }, // Question 9
+          { id: 10, text: "Do you have an incident response process documented?", options: [{ label: "Yes, documented and tested", score: 100 }, { label: "Documented only", score: 70 }, { label: "No", score: 20 }] }, // Question 10
         ],
       },
     ];
 
+    // Flatten all questions into a single array with section info attached to each question
     const allQuestions = sections.flatMap(s => s.questions.map(q => ({ ...q, sectionId: s.id, sectionTitle: s.title, sectionDescription: s.description, sectionIcon: s.icon })));
     
-    let currentIndex = 0;
-    let answers = {};
+    // ==========================================
+    // STATE VARIABLES - Track current position and answers
+    // ==========================================
+    let currentIndex = 0; // Index of current question being displayed (0-9)
+    let answers = {}; // Object storing answers: { questionId: score }
 
+    // ==========================================
+    // HELPER FUNCTION - Determine risk level based on score
+    // ==========================================
     function getRisk(score) {
-      if (score >= 85) return { label: "Low Risk", className: "low" };
-      if (score >= 65) return { label: "Moderate Risk", className: "medium" };
-      return { label: "High Risk", className: "high" };
+      // Returns risk label and CSS class based on score threshold
+      if (score >= 85) return { label: "Low Risk", className: "low" }; // 85-100 = Low Risk (green)
+      if (score >= 65) return { label: "Moderate Risk", className: "medium" }; // 65-84 = Moderate (yellow)
+      return { label: "High Risk", className: "high" }; // 0-64 = High Risk (red)
     }
 
+    // ==========================================
+    // CALCULATE DATA - Compute all scores and progress
+    // ==========================================
     function calculateData() {
+      // Get array of all answer scores (filtering out undefined)
       const answerValues = Object.values(answers).filter(v => !isNaN(v));
+      
+      // Calculate overall average score (0-100)
       const overallScore = answerValues.length ? Math.round(answerValues.reduce((a, b) => a + b, 0) / answerValues.length) : 0;
+      
+      // Count how many questions have been answered
       const answeredCount = Object.keys(answers).length;
+      
+      // Calculate completion percentage
       const progress = Math.round((answeredCount / allQuestions.length) * 100);
 
+      // Calculate score for each section individually
       const sectionScores = sections.map(section => {
+        // Get answers for questions in this section only
         const values = section.questions.map(q => answers[q.id]).filter(v => typeof v !== "undefined");
+        // Average score for this section
         const score = values.length ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : 0;
+        // Return section data with computed values
         return { ...section, completed: values.length, total: section.questions.length, score };
       });
 
+      // Return all calculated data
       return { overallScore, answeredCount, progress, sectionScores, risk: getRisk(overallScore) };
     }
 
+    // ==========================================
+    // RENDER SECTION LIST - Update sidebar section navigation
+    // ==========================================
     function renderSectionList() {
-      const container = document.getElementById('section-list');
-      const currentQuestion = allQuestions[currentIndex];
-      const { sectionScores } = calculateData();
+      const container = document.getElementById('section-list'); // Get sidebar section list container
+      const currentQuestion = allQuestions[currentIndex]; // Get current question to determine active section
+      const { sectionScores } = calculateData(); // Get section scores
 
+      // Generate HTML for each section item in sidebar
       container.innerHTML = sectionScores.map(section => `
         <div class="surface section-item ${section.id === currentQuestion.sectionId ? 'active' : ''}" onclick="jumpToSection('${section.id}')">
           <div class="section-header">
             <div>
-              <div class="section-title">${section.icon} ${section.title}</div>
-              <div class="section-meta">${section.completed}/${section.total} complete</div>
+              <div class="section-title">${section.icon} ${section.title}</div> <!-- Section icon and name -->
+              <div class="section-meta">${section.completed}/${section.total} complete</div> <!-- Progress text -->
             </div>
-            <span class="pill">${section.score}%</span>
+            <span class="pill">${section.score}%</span> <!-- Section score badge -->
           </div>
         </div>
-      `).join('');
+      `).join(''); // Join array into single HTML string
     }
 
+    // ==========================================
+    // RENDER SECTION SCORES - Update live summary panel
+    // ==========================================
     function renderSectionScores() {
-      const { sectionScores } = calculateData();
-      const container = document.getElementById('section-scores');
+      const { sectionScores } = calculateData(); // Get calculated section scores
+      const container = document.getElementById('section-scores'); // Get summary container
+      
+      // Generate HTML for each section's score bar
       container.innerHTML = sectionScores.map(section => `
         <div class="summary-item">
           <div class="muted-row" style="margin-bottom: 8px">
-            <span>${section.title}</span>
-            <span>${section.score}%</span>
+            <span>${section.title}</span> <!-- Section name -->
+            <span>${section.score}%</span> <!-- Section score -->
           </div>
-          <div class="bar"><span style="width: ${section.score}%"></span></div>
+          <div class="bar"><span style="width: ${section.score}%"></span></div> <!-- Progress bar -->
         </div>
       `).join('');
     }
 
+    // ==========================================
+    // RENDER QUESTION - Display current question and answer options
+    // ==========================================
     function renderQuestion() {
-      const question = allQuestions[currentIndex];
-      const section = sections.find(s => s.id === question.sectionId);
-      const sectionIdx = sections.indexOf(section);
+      const question = allQuestions[currentIndex]; // Get current question object
+      const section = sections.find(s => s.id === question.sectionId); // Find which section this question belongs to
+      const sectionIdx = sections.indexOf(section); // Get section index (0-4)
 
-      document.getElementById('section-label').textContent = `Section ${sectionIdx + 1} of ${sections.length}`;
-      document.getElementById('section-title').textContent = section.title;
-      document.getElementById('section-desc').textContent = section.description;
-      document.getElementById('current-section').textContent = section.title;
-      document.getElementById('question-badge').textContent = `Question ${currentIndex + 1} of ${allQuestions.length}`;
-      document.getElementById('question-icon').textContent = section.icon;
-      document.getElementById('question-text').textContent = question.text;
+      // Update section header text
+      document.getElementById('section-label').textContent = `Section ${sectionIdx + 1} of ${sections.length}`; // "Section X of 5"
+      document.getElementById('section-title').textContent = section.title; // Section name
+      document.getElementById('section-desc').textContent = section.description; // Section description
+      document.getElementById('current-section').textContent = section.title; // Update metric card
+      document.getElementById('question-badge').textContent = `Question ${currentIndex + 1} of ${allQuestions.length}`; // "Question X of 10"
+      document.getElementById('question-icon').textContent = section.icon; // Update emoji icon
+      document.getElementById('question-text').textContent = question.text; // Display question text
 
+      // Get answer list container and generate answer option HTML
       const answerList = document.getElementById('answer-list');
       answerList.innerHTML = question.options.map(option => `
         <div class="answer-option ${answers[question.id] === option.score ? 'selected' : ''}" onclick="selectAnswer(${question.id}, ${option.score})">
           <div class="option-left">
-            <div class="option-radio ${answers[question.id] === option.score ? 'selected' : ''}"></div>
-            <div class="option-label">${option.label}</div>
+            <div class="option-radio ${answers[question.id] === option.score ? 'selected' : ''}"></div> <!-- Radio button visual -->
+            <div class="option-label">${option.label}</div> <!-- Answer text -->
           </div>
-          <div class="option-score">${option.score} pts</div>
+          <div class="option-score">${option.score} pts</div> <!-- Points badge -->
         </div>
       `).join('');
     }
 
+    // ==========================================
+    // SELECT ANSWER - Store user's answer for a question
+    // ==========================================
     function selectAnswer(questionId, score) {
-      answers[questionId] = score;
-      updateUI();
+      answers[questionId] = score; // Store the score in answers object with question ID as key
+      updateUI(); // Refresh the entire UI to reflect the change
     }
 
+    // ==========================================
+    // UPDATE UI - Master function to refresh all UI elements
+    // ==========================================
     function updateUI() {
+      // Get all calculated data
       const { overallScore, answeredCount, progress, risk } = calculateData();
-      const question = allQuestions[currentIndex];
+      const question = allQuestions[currentIndex]; // Current question
 
-      document.getElementById('sidebar-progress').textContent = `${progress}%`;
-      document.getElementById('sidebar-bar').style.width = `${progress}%`;
-      document.getElementById('sidebar-answered').textContent = `${answeredCount}/${allQuestions.length} answered`;
-      document.getElementById('sidebar-risk').textContent = risk.label;
+      // Update sidebar progress section
+      document.getElementById('sidebar-progress').textContent = `${progress}%`; // Progress percentage text
+      document.getElementById('sidebar-bar').style.width = `${progress}%`; // Progress bar width
+      document.getElementById('sidebar-answered').textContent = `${answeredCount}/${allQuestions.length} answered`; // "X/10 answered"
+      document.getElementById('sidebar-risk').textContent = risk.label; // Risk level text
 
-      document.getElementById('completed-count').textContent = `${answeredCount}/${allQuestions.length}`;
-      document.getElementById('overall-score').textContent = `${overallScore}/100`;
-      document.getElementById('summary-score').textContent = `${overallScore}%`;
-      document.getElementById('summary-bar').style.width = `${overallScore}%`;
+      // Update metrics cards
+      document.getElementById('completed-count').textContent = `${answeredCount}/${allQuestions.length}`; // Completed count
+      document.getElementById('overall-score').textContent = `${overallScore}/100`; // Overall score
+      document.getElementById('summary-score').textContent = `${overallScore}%`; // Summary score percentage
+      document.getElementById('summary-bar').style.width = `${overallScore}%`; // Summary progress bar
 
+      // Update risk pill in header
       const headerRisk = document.getElementById('header-risk');
-      headerRisk.textContent = risk.label;
-      headerRisk.className = `pill ${risk.className}`;
+      headerRisk.textContent = risk.label; // Risk text
+      headerRisk.className = `pill ${risk.className}`; // Apply risk color class (low/medium/high)
 
-      document.getElementById('btn-prev').disabled = currentIndex === 0;
-      document.getElementById('btn-next').disabled = currentIndex === allQuestions.length - 1;
-      document.getElementById('answer-status').textContent = answers[question.id] ? 'Answer saved' : 'Select one option to continue';
+      // Update navigation button states
+      document.getElementById('btn-prev').disabled = currentIndex === 0; // Disable prev on first question
+      document.getElementById('btn-next').disabled = currentIndex === allQuestions.length - 1; // Disable next on last question
+      document.getElementById('answer-status').textContent = answers[question.id] ? 'Answer saved' : 'Select one option to continue'; // Status message
 
-      renderSectionList();
-      renderSectionScores();
-      renderQuestion();
-      updateRecommendations(overallScore);
+      // Call other render functions to update sub-components
+      renderSectionList(); // Update sidebar section list
+      renderSectionScores(); // Update live summary scores
+      renderQuestion(); // Update question display
+      updateRecommendations(overallScore); // Update recommendations based on score
     }
 
+    // ==========================================
+    // UPDATE RECOMMENDATIONS - Show relevant security tips based on score
+    // ==========================================
     function updateRecommendations(score) {
-      const container = document.getElementById('recommendations');
-      const items = [];
+      const container = document.getElementById('recommendations'); // Get recommendations container
+      const items = []; // Array to hold recommendation objects
 
+      // Add recommendations based on score thresholds (lower score = more recommendations)
       if (score < 85) items.push({ icon: "🚨", title: "Enable MFA for all users", note: "Reduce account takeover risk with stronger login protection." });
       if (score < 75) items.push({ icon: "⚠️", title: "Review firewall policies", note: "Tighten perimeter controls and remove stale access rules." });
       if (score < 80) items.push({ icon: "📡", title: "Set up centralized monitoring", note: "Improve visibility into suspicious activity and failed logins." });
+      
+      // If no recommendations needed (high score), show success message
       if (!items.length) items.push({ icon: "✅", title: "Great progress. Your posture looks strong.", note: "Maintain reviews and keep training, backups, and monitoring current." });
 
+      // Generate HTML for recommendation items
       container.innerHTML = items.map(item => `
         <div class="recommend-item">
-          <div class="recommend-icon">${item.icon}</div>
+          <div class="recommend-icon">${item.icon}</div> <!-- Emoji icon -->
           <div>
-            <div style="font-weight: 600">${item.title}</div>
-            <div class="note-text" style="margin-top: 4px; font-size: 13px">${item.note}</div>
+            <div style="font-weight: 600">${item.title}</div> <!-- Recommendation title -->
+            <div class="note-text" style="margin-top: 4px; font-size: 13px">${item.note}</div> <!-- Description -->
           </div>
         </div>
       `).join('');
     }
 
+    // ==========================================
+    // NAVIGATION FUNCTIONS - Move between questions
+    // ==========================================
+    
+    // Go to next question
     function goNext() {
-      if (currentIndex < allQuestions.length - 1) {
-        currentIndex++;
-        updateUI();
+      if (currentIndex < allQuestions.length - 1) { // Check if not on last question
+        currentIndex++; // Increment question index
+        updateUI(); // Refresh display
       }
     }
 
+    // Go to previous question
     function goPrev() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateUI();
+      if (currentIndex > 0) { // Check if not on first question
+        currentIndex--; // Decrement question index
+        updateUI(); // Refresh display
       }
     }
 
+    // Jump to first question of a specific section (called when clicking sidebar)
     function jumpToSection(sectionId) {
-      const idx = allQuestions.findIndex(q => q.sectionId === sectionId);
-      if (idx >= 0) {
-        currentIndex = idx;
-        updateUI();
+      const idx = allQuestions.findIndex(q => q.sectionId === sectionId); // Find first question in section
+      if (idx >= 0) { // If section found
+        currentIndex = idx; // Set current index to that question
+        updateUI(); // Refresh display
       }
     }
 
+    // ==========================================
+    // GENERATE REPORT - Called when "Generate Report" button is clicked
+    // ==========================================
     function generateReport() {
-      const { answeredCount, overallScore, risk } = calculateData();
+      const { answeredCount, overallScore, risk } = calculateData(); // Get current scores
+      
+      // Check if all questions are answered
       if (answeredCount < allQuestions.length) {
+        // Show alert if assessment incomplete
         alert(`Please answer all questions first. You've answered ${answeredCount} of ${allQuestions.length} questions.`);
-        return;
+        return; // Exit function early
       }
+      
+      // Show completion alert with final results
       alert(`Assessment Complete!\n\nOverall Score: ${overallScore}/100\nRisk Level: ${risk.label}\n\nRedirecting to dashboard...`);
-      window.location.href = 'index.html';
+      window.location.href = 'index.html'; // Redirect to dashboard page
     }
 
-    // Initialize
-    updateUI();
-  </script>
-</body>
-</html>
+    // ==========================================
+    // INITIALIZATION - Run when page loads
+    // ==========================================
+    updateUI(); // Initialize the UI with default state
+  </script> <!-- End of JavaScript -->
+</body> <!-- End of body -->
+</html> <!-- End of document -->
