@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeStart Security Check - Assessment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh;
+      background: #071225;
+      color: #ffffff;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: #0a1730;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      padding: 24px 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      background: rgba(16,185,129,0.14);
+      color: #34d399;
+      font-size: 24px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .brand-subtitle {
+      margin: 2px 0 0;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .surface {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      border-radius: 24px;
+    }
+
+    .surface-pad { padding: 18px; }
+
+    .progress-label, .eyebrow, .metric-label {
+      color: #94a3b8;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .big-number {
+      font-size: 42px;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+
+    .bar {
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #3b82f6);
+      transition: width .25s ease;
+    }
+
+    .muted-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .section-list {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-item {
+      padding: 14px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .section-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .section-item.active {
+      background: rgba(59,130,246,0.12);
+      border-color: rgba(59,130,246,0.35);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .section-meta {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .pill {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      white-space: nowrap;
+    }
+
+    .pill.low { background: rgba(16,185,129,0.14); color: #34d399; border-color: rgba(16,185,129,0.28); }
+    .pill.medium { background: rgba(245,158,11,0.14); color: #fbbf24; border-color: rgba(245,158,11,0.28); }
+    .pill.high { background: rgba(239,68,68,0.14); color: #f87171; border-color: rgba(239,68,68,0.28); }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 24px;
+    }
+
+    .grid-top, .grid-main {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1.6fr .9fr;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(14,27,53,0.98), rgba(6,17,35,0.96));
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 24px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .hero-title {
+      margin: 8px 0 10px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .hero-desc, .tip-text, .section-description, .note-text {
+      color: #94a3b8;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 18px;
+      background: #2563eb;
+      color: #fff;
+      padding: 12px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #1d4ed8; }
+
+    .btn.secondary {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .btn.secondary:hover { background: rgba(255,255,255,0.1); }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .metrics {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .metric-card {
+      padding: 16px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .card-title {
+      margin: 0 0 16px;
+      font-size: 24px;
+    }
+
+    .summary-list, .recommend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .summary-item, .recommend-item, .answer-option {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .question-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(13,27,53,0.88), rgba(8,18,36,0.98));
+      border-radius: 28px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .question-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .question-icon {
+      min-width: 48px;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      background: rgba(59,130,246,0.14);
+      font-size: 22px;
+    }
+
+    .question-title {
+      line-height: 1.5;
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .answer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .answer-option {
+      cursor: pointer;
+      transition: .2s ease;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .answer-option:hover { background: rgba(255,255,255,0.06); }
+
+    .answer-option.selected {
+      background: rgba(59,130,246,0.12);
+      border-color: rgba(59,130,246,0.35);
+    }
+
+    .option-left {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .option-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.35);
+      margin-top: 3px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .option-radio.selected {
+      border-color: #60a5fa;
+    }
+
+    .option-radio.selected::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      background: #60a5fa;
+      border-radius: 999px;
+    }
+
+    .option-label {
+      font-weight: 600;
+    }
+
+    .option-score {
+      background: rgba(255,255,255,0.06);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #cbd5e1;
+      white-space: nowrap;
+    }
+
+    .question-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .recommend-item {
+      display: flex;
+      gap: 12px;
+    }
+
+    .recommend-icon {
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .sidebar-tip {
+      margin-top: 20px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .back-link:hover { color: #fff; }
+
+    @media (max-width: 1200px) {
+      .sidebar { display: none; }
+      .content { margin-left: 0; }
+      .grid-top, .grid-main { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .hero-title { font-size: 34px; }
+      .question-title { font-size: 24px; }
+    }
+
+    @media (max-width: 600px) {
+      .content { padding: 14px; }
+      .metrics { grid-template-columns: 1fr; }
+      .hero, .surface-pad, .question-card { padding: 18px; }
+      .hero-title { font-size: 28px; }
+      .question-title { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <div>
+          <h2 class="brand-title">SafeStart</h2>
+          <p class="brand-subtitle">Security Check</p>
+        </div>
+      </div>
+
+      <div class="surface surface-pad">
+        <div class="progress-label">Assessment Progress</div>
+        <div class="big-number" id="sidebar-progress">0%</div>
+        <div class="bar"><span id="sidebar-bar" style="width: 0%"></span></div>
+        <div class="muted-row">
+          <span id="sidebar-answered">0/10 answered</span>
+          <span id="sidebar-risk">Low Risk</span>
+        </div>
+      </div>
+
+      <div class="section-list" id="section-list"></div>
+
+      <div class="surface surface-pad sidebar-tip">
+        <h4 style="margin: 0 0 8px">Quick tip</h4>
+        <p class="tip-text" style="margin: 0; line-height: 1.5">
+          Complete the high-impact controls first to improve your final score faster.
+        </p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <a href="index.html" class="back-link">← Back to Dashboard</a>
+
+      <div class="grid-top">
+        <section class="hero">
+          <div class="hero-top">
+            <div>
+              <div class="eyebrow">Evaluate • Improve • Protect</div>
+              <h1 class="hero-title">Cybersecurity Assessment</h1>
+              <p class="hero-desc">
+                Answer a guided set of questions to assess your current security posture and generate actionable recommendations.
+              </p>
+            </div>
+            <div class="actions">
+              <span class="pill low" id="header-risk">Low Risk</span>
+              <button class="btn" onclick="generateReport()">Generate Report</button>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric-card">
+              <div class="metric-label">Total Questions</div>
+              <div class="metric-value" id="total-questions">10</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Completed</div>
+              <div class="metric-value" id="completed-count">0/10</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Score</div>
+              <div class="metric-value" id="overall-score">0/100</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Current Section</div>
+              <div class="metric-value" id="current-section" style="font-size: 18px">Access Control</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="surface surface-pad">
+          <h3 class="card-title">Live Summary</h3>
+          <div class="summary-item">
+            <div class="muted-row">
+              <span>Overall posture</span>
+              <strong id="summary-score">0%</strong>
+            </div>
+            <div class="bar"><span id="summary-bar" style="width: 0%"></span></div>
+          </div>
+          <div class="summary-list" id="section-scores"></div>
+        </section>
+      </div>
+
+      <div class="grid-main" style="margin-top: 24px">
+        <section class="surface surface-pad">
+          <div style="display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start">
+            <div>
+              <div style="color: #93c5fd; font-size: 14px" id="section-label">Section 1 of 5</div>
+              <h2 style="margin: 8px 0 10px; font-size: 32px" id="section-title">Access Control</h2>
+              <p class="section-description" style="margin-bottom: 0" id="section-desc">
+                Review user authentication, permissions, and account protection settings.
+              </p>
+            </div>
+            <span class="pill" id="question-badge">Question 1 of 10</span>
+          </div>
+
+          <div class="question-card" id="question-card">
+            <div class="question-header">
+              <div class="question-icon" id="question-icon">🔐</div>
+              <div>
+                <div class="eyebrow" style="margin-bottom: 6px">Assessment Question</div>
+                <h3 class="question-title" id="question-text">Loading...</h3>
+              </div>
+            </div>
+            <div class="answer-list" id="answer-list"></div>
+          </div>
+
+          <div class="question-actions">
+            <button class="btn secondary" id="btn-prev" onclick="goPrev()">← Previous</button>
+            <div class="note-text" id="answer-status">Select one option to continue</div>
+            <button class="btn" id="btn-next" onclick="goNext()">Next →</button>
+          </div>
+        </section>
+
+        <div style="display: flex; flex-direction: column; gap: 24px">
+          <section class="surface surface-pad">
+            <h3 class="card-title">Recommendations</h3>
+            <div class="recommend-list" id="recommendations"></div>
+          </section>
+
+          <section class="surface surface-pad">
+            <h3 class="card-title">Assessment Notes</h3>
+            <p class="note-text">• Same dark premium style as your dashboard.</p>
+            <p class="note-text">• Step-by-step assessment flow instead of only summary cards.</p>
+            <p class="note-text">• You can connect this screen with your results and reports pages.</p>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const sections = [
+      {
+        id: "access-control",
+        title: "Access Control",
+        description: "Review user authentication, permissions, and account protection settings.",
+        icon: "🔐",
+        questions: [
+          { id: 1, text: "Do all users have multi-factor authentication enabled?", options: [{ label: "Yes, for all users", score: 100 }, { label: "Enabled for some users", score: 60 }, { label: "Not enabled", score: 20 }] },
+          { id: 2, text: "Are admin accounts separated from standard user accounts?", options: [{ label: "Yes", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] },
+        ],
+      },
+      {
+        id: "network-security",
+        title: "Network Security",
+        description: "Check firewall rules, segmentation, remote access, and perimeter defenses.",
+        icon: "🌐",
+        questions: [
+          { id: 3, text: "Is your firewall configuration reviewed regularly?", options: [{ label: "Monthly or better", score: 100 }, { label: "Quarterly", score: 70 }, { label: "Rarely / Never", score: 30 }] },
+          { id: 4, text: "Do you use a VPN for remote access?", options: [{ label: "Yes, enforced", score: 100 }, { label: "Used by some staff", score: 60 }, { label: "No", score: 20 }] },
+        ],
+      },
+      {
+        id: "data-protection",
+        title: "Data Protection",
+        description: "Evaluate backup coverage, encryption, retention, and sensitive data handling.",
+        icon: "🗄️",
+        questions: [
+          { id: 5, text: "Is sensitive business data encrypted at rest?", options: [{ label: "Yes", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] },
+          { id: 6, text: "Are backups tested on a scheduled basis?", options: [{ label: "Monthly", score: 100 }, { label: "Occasionally", score: 60 }, { label: "Never", score: 15 }] },
+        ],
+      },
+      {
+        id: "awareness",
+        title: "Security Awareness",
+        description: "Measure employee training, phishing readiness, and policy awareness.",
+        icon: "👥",
+        questions: [
+          { id: 7, text: "Do employees receive phishing or security awareness training?", options: [{ label: "Every quarter", score: 100 }, { label: "Once a year", score: 65 }, { label: "No formal training", score: 20 }] },
+          { id: 8, text: "Are staff aware of how to report a suspicious email or device issue?", options: [{ label: "Yes", score: 100 }, { label: "Some teams only", score: 60 }, { label: "No", score: 20 }] },
+        ],
+      },
+      {
+        id: "monitoring",
+        title: "Monitoring & Response",
+        description: "Understand log visibility, alerting, and incident handling maturity.",
+        icon: "👁️",
+        questions: [
+          { id: 9, text: "Do you actively monitor login failures and suspicious activity?", options: [{ label: "Yes, centralized monitoring", score: 100 }, { label: "Partially", score: 65 }, { label: "No", score: 25 }] },
+          { id: 10, text: "Do you have an incident response process documented?", options: [{ label: "Yes, documented and tested", score: 100 }, { label: "Documented only", score: 70 }, { label: "No", score: 20 }] },
+        ],
+      },
+    ];
+
+    const allQuestions = sections.flatMap(s => s.questions.map(q => ({ ...q, sectionId: s.id, sectionTitle: s.title, sectionDescription: s.description, sectionIcon: s.icon })));
+    
+    let currentIndex = 0;
+    let answers = {};
+
+    function getRisk(score) {
+      if (score >= 85) return { label: "Low Risk", className: "low" };
+      if (score >= 65) return { label: "Moderate Risk", className: "medium" };
+      return { label: "High Risk", className: "high" };
+    }
+
+    function calculateData() {
+      const answerValues = Object.values(answers).filter(v => !isNaN(v));
+      const overallScore = answerValues.length ? Math.round(answerValues.reduce((a, b) => a + b, 0) / answerValues.length) : 0;
+      const answeredCount = Object.keys(answers).length;
+      const progress = Math.round((answeredCount / allQuestions.length) * 100);
+
+      const sectionScores = sections.map(section => {
+        const values = section.questions.map(q => answers[q.id]).filter(v => typeof v !== "undefined");
+        const score = values.length ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : 0;
+        return { ...section, completed: values.length, total: section.questions.length, score };
+      });
+
+      return { overallScore, answeredCount, progress, sectionScores, risk: getRisk(overallScore) };
+    }
+
+    function renderSectionList() {
+      const container = document.getElementById('section-list');
+      const currentQuestion = allQuestions[currentIndex];
+      const { sectionScores } = calculateData();
+
+      container.innerHTML = sectionScores.map(section => `
+        <div class="surface section-item ${section.id === currentQuestion.sectionId ? 'active' : ''}" onclick="jumpToSection('${section.id}')">
+          <div class="section-header">
+            <div>
+              <div class="section-title">${section.icon} ${section.title}</div>
+              <div class="section-meta">${section.completed}/${section.total} complete</div>
+            </div>
+            <span class="pill">${section.score}%</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSectionScores() {
+      const { sectionScores } = calculateData();
+      const container = document.getElementById('section-scores');
+      container.innerHTML = sectionScores.map(section => `
+        <div class="summary-item">
+          <div class="muted-row" style="margin-bottom: 8px">
+            <span>${section.title}</span>
+            <span>${section.score}%</span>
+          </div>
+          <div class="bar"><span style="width: ${section.score}%"></span></div>
+        </div>
+      `).join('');
+    }
+
+    function renderQuestion() {
+      const question = allQuestions[currentIndex];
+      const section = sections.find(s => s.id === question.sectionId);
+      const sectionIdx = sections.indexOf(section);
+
+      document.getElementById('section-label').textContent = `Section ${sectionIdx + 1} of ${sections.length}`;
+      document.getElementById('section-title').textContent = section.title;
+      document.getElementById('section-desc').textContent = section.description;
+      document.getElementById('current-section').textContent = section.title;
+      document.getElementById('question-badge').textContent = `Question ${currentIndex + 1} of ${allQuestions.length}`;
+      document.getElementById('question-icon').textContent = section.icon;
+      document.getElementById('question-text').textContent = question.text;
+
+      const answerList = document.getElementById('answer-list');
+      answerList.innerHTML = question.options.map(option => `
+        <div class="answer-option ${answers[question.id] === option.score ? 'selected' : ''}" onclick="selectAnswer(${question.id}, ${option.score})">
+          <div class="option-left">
+            <div class="option-radio ${answers[question.id] === option.score ? 'selected' : ''}"></div>
+            <div class="option-label">${option.label}</div>
+          </div>
+          <div class="option-score">${option.score} pts</div>
+        </div>
+      `).join('');
+    }
+
+    function selectAnswer(questionId, score) {
+      answers[questionId] = score;
+      updateUI();
+    }
+
+    function updateUI() {
+      const { overallScore, answeredCount, progress, risk } = calculateData();
+      const question = allQuestions[currentIndex];
+
+      document.getElementById('sidebar-progress').textContent = `${progress}%`;
+      document.getElementById('sidebar-bar').style.width = `${progress}%`;
+      document.getElementById('sidebar-answered').textContent = `${answeredCount}/${allQuestions.length} answered`;
+      document.getElementById('sidebar-risk').textContent = risk.label;
+
+      document.getElementById('completed-count').textContent = `${answeredCount}/${allQuestions.length}`;
+      document.getElementById('overall-score').textContent = `${overallScore}/100`;
+      document.getElementById('summary-score').textContent = `${overallScore}%`;
+      document.getElementById('summary-bar').style.width = `${overallScore}%`;
+
+      const headerRisk = document.getElementById('header-risk');
+      headerRisk.textContent = risk.label;
+      headerRisk.className = `pill ${risk.className}`;
+
+      document.getElementById('btn-prev').disabled = currentIndex === 0;
+      document.getElementById('btn-next').disabled = currentIndex === allQuestions.length - 1;
+      document.getElementById('answer-status').textContent = answers[question.id] ? 'Answer saved' : 'Select one option to continue';
+
+      renderSectionList();
+      renderSectionScores();
+      renderQuestion();
+      updateRecommendations(overallScore);
+    }
+
+    function updateRecommendations(score) {
+      const container = document.getElementById('recommendations');
+      const items = [];
+
+      if (score < 85) items.push({ icon: "🚨", title: "Enable MFA for all users", note: "Reduce account takeover risk with stronger login protection." });
+      if (score < 75) items.push({ icon: "⚠️", title: "Review firewall policies", note: "Tighten perimeter controls and remove stale access rules." });
+      if (score < 80) items.push({ icon: "📡", title: "Set up centralized monitoring", note: "Improve visibility into suspicious activity and failed logins." });
+      if (!items.length) items.push({ icon: "✅", title: "Great progress. Your posture looks strong.", note: "Maintain reviews and keep training, backups, and monitoring current." });
+
+      container.innerHTML = items.map(item => `
+        <div class="recommend-item">
+          <div class="recommend-icon">${item.icon}</div>
+          <div>
+            <div style="font-weight: 600">${item.title}</div>
+            <div class="note-text" style="margin-top: 4px; font-size: 13px">${item.note}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function goNext() {
+      if (currentIndex < allQuestions.length - 1) {
+        currentIndex++;
+        updateUI();
+      }
+    }
+
+    function goPrev() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateUI();
+      }
+    }
+
+    function jumpToSection(sectionId) {
+      const idx = allQuestions.findIndex(q => q.sectionId === sectionId);
+      if (idx >= 0) {
+        currentIndex = idx;
+        updateUI();
+      }
+    }
+
+    function generateReport() {
+      const { answeredCount, overallScore, risk } = calculateData();
+      if (answeredCount < allQuestions.length) {
+        alert(`Please answer all questions first. You've answered ${answeredCount} of ${allQuestions.length} questions.`);
+        return;
+      }
+      alert(`Assessment Complete!\n\nOverall Score: ${overallScore}/100\nRisk Level: ${risk.label}\n\nRedirecting to dashboard...`);
+      window.location.href = 'index.html';
+    }
+
+    // Initialize
+    updateUI();
+  </script>
+</body>
+</html>
