@@ -609,15 +609,20 @@ function initEventListeners() {
        2. Add 'active' class to clicked item
        3. CSS styles the active item with blue highlight
      
-     NOTE: e.preventDefault() stops the link from navigating away.
-           In a real app, you might load different content instead.
+     NOTE: Only prevents navigation for placeholder links (href="#").
+           Real links like assessment.html will navigate normally.
      ────────────────────────────────────────────────────────────────────────── */
   
   const navItems = document.querySelectorAll('.nav-item');
   
   navItems.forEach(item => {
     item.addEventListener('click', (e) => {
-      e.preventDefault();  // Don't follow the link
+      // Only prevent default for placeholder links (href="#")
+      // Allow real links like assessment.html to navigate
+      const href = item.getAttribute('href');
+      if (href === '#') {
+        e.preventDefault();  // Don't follow placeholder links
+      }
       
       // Remove active class from all items
       navItems.forEach(i => i.classList.remove('active'));
