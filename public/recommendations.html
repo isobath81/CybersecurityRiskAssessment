@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<!-- ============================================================ -->
+<!-- SAFESTART SECURITY CHECK - RECOMMENDATIONS PAGE              -->
+<!-- ============================================================ -->
+<!-- This page displays prioritized security recommendations      -->
+<!-- based on the user's security assessment results.             -->
+<!-- Recommendations are filterable by priority level.            -->
+<!-- ============================================================ -->
+
+<html lang="en">
+<!-- lang="en" - Sets document language to English for accessibility and SEO -->
+
+<head>
+  <!-- CHARACTER ENCODING -->
+  <meta charset="UTF-8">
+  <!-- UTF-8 encoding supports all Unicode characters including emojis used in icons -->
+
+  <!-- VIEWPORT SETTINGS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Makes page responsive: width matches device, no initial zoom -->
+
+  <!-- PAGE TITLE -->
+  <title>SafeStart Security Check - Recommendations</title>
+  <!-- Shown in browser tab and bookmarks -->
+
+  <!-- EXTERNAL STYLESHEETS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Main application styles including CSS variables and base components -->
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Inter font family with multiple weights for typography hierarchy -->
+
+  <!-- ============================================================ -->
+  <!-- PAGE-SPECIFIC STYLES                                         -->
+  <!-- These styles are specific to the recommendations page        -->
+  <!-- ============================================================ -->
+  <style>
+    /* ------------------------------------------------------------ */
+    /* PAGE HEADER STYLES                                           */
+    /* Container for page title and subtitle                        */
+    /* ------------------------------------------------------------ */
+    .page-header {
+      margin-bottom: 24px;  /* 24px spacing below header before content */
+    }
+
+    .page-title {
+      font-size: 28px;      /* Large title size for page heading */
+      font-weight: 700;     /* Bold weight for emphasis */
+      margin-bottom: 8px;   /* Small gap between title and subtitle */
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);  /* Muted color from CSS variables */
+      font-size: 14px;               /* Smaller secondary text size */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* RECOMMENDATIONS GRID LAYOUT                                  */
+    /* Responsive grid that holds all recommendation cards          */
+    /* ------------------------------------------------------------ */
+    .recommendations-grid {
+      display: grid;                                          /* CSS Grid layout */
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));  /* Responsive: min 350px, fills available space */
+      gap: 20px;                                              /* 20px spacing between grid items */
+      margin-bottom: 24px;                                    /* Bottom margin for page spacing */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* RECOMMENDATION CARD STYLES                                   */
+    /* Individual card container for each recommendation            */
+    /* ------------------------------------------------------------ */
+    .rec-card {
+      background: var(--bg-card);           /* Card background color from CSS variables */
+      border: 1px solid var(--border-color); /* Subtle border using theme color */
+      border-radius: 16px;                  /* Rounded corners for modern look */
+      padding: 20px;                        /* Internal spacing from edges */
+      transition: all 0.2s;                 /* Smooth animation for hover effects */
+    }
+
+    .rec-card:hover {
+      border-color: rgba(59, 130, 246, 0.3);  /* Blue tint on border when hovering */
+      transform: translateY(-2px);            /* Subtle lift effect on hover */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* CARD HEADER SECTION                                          */
+    /* Contains icon, title, and priority badge                     */
+    /* ------------------------------------------------------------ */
+    .rec-header {
+      display: flex;           /* Flexbox for horizontal layout */
+      align-items: flex-start; /* Align items to top */
+      gap: 14px;               /* Space between icon and text */
+      margin-bottom: 14px;     /* Space below header before description */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* RECOMMENDATION ICON CONTAINER                                */
+    /* Colored circle background for emoji icons                    */
+    /* ------------------------------------------------------------ */
+    .rec-icon {
+      width: 44px;                   /* Fixed width for icon container */
+      height: 44px;                  /* Fixed height for icon container */
+      border-radius: 12px;           /* Rounded square shape */
+      display: flex;                 /* Flexbox for centering */
+      align-items: center;           /* Vertical centering of icon */
+      justify-content: center;       /* Horizontal centering of icon */
+      font-size: 20px;               /* Size of emoji icon */
+      flex-shrink: 0;                /* Prevent shrinking in flex container */
+    }
+
+    /* CRITICAL PRIORITY ICON - Red background (danger/urgent) */
+    .rec-icon.critical {
+      background: rgba(239, 68, 68, 0.15);  /* 15% opacity red background */
+    }
+
+    /* HIGH PRIORITY ICON - Orange/amber background (warning) */
+    .rec-icon.high {
+      background: rgba(245, 158, 11, 0.15); /* 15% opacity amber background */
+    }
+
+    /* MEDIUM PRIORITY ICON - Blue background (informational) */
+    .rec-icon.medium {
+      background: rgba(59, 130, 246, 0.15); /* 15% opacity blue background */
+    }
+
+    /* LOW PRIORITY ICON - Green background (safe/good) */
+    .rec-icon.low {
+      background: rgba(16, 185, 129, 0.15); /* 15% opacity green background */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* RECOMMENDATION TITLE                                         */
+    /* Main heading text for each recommendation                    */
+    /* ------------------------------------------------------------ */
+    .rec-title {
+      font-size: 16px;       /* Medium-large text size */
+      font-weight: 600;      /* Semi-bold for emphasis */
+      margin-bottom: 4px;    /* Small gap before priority badge */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* PRIORITY BADGE                                               */
+    /* Colored label showing recommendation priority level          */
+    /* ------------------------------------------------------------ */
+    .rec-priority {
+      display: inline-block;     /* Allows width to fit content */
+      padding: 4px 10px;         /* Internal spacing for badge */
+      border-radius: 6px;        /* Rounded corners */
+      font-size: 11px;           /* Small text size */
+      font-weight: 600;          /* Semi-bold for readability */
+      text-transform: uppercase; /* ALL CAPS for badge text */
+    }
+
+    /* CRITICAL BADGE - Red text on light red background */
+    .rec-priority.critical {
+      background: rgba(239, 68, 68, 0.15);  /* Light red background */
+      color: #ef4444;                        /* Solid red text */
+    }
+
+    /* HIGH BADGE - Amber text on light amber background */
+    .rec-priority.high {
+      background: rgba(245, 158, 11, 0.15); /* Light amber background */
+      color: #f59e0b;                        /* Solid amber text */
+    }
+
+    /* MEDIUM BADGE - Blue text on light blue background */
+    .rec-priority.medium {
+      background: rgba(59, 130, 246, 0.15); /* Light blue background */
+      color: #3b82f6;                        /* Solid blue text */
+    }
+
+    /* LOW BADGE - Green text on light green background */
+    .rec-priority.low {
+      background: rgba(16, 185, 129, 0.15); /* Light green background */
+      color: #10b981;                        /* Solid green text */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* RECOMMENDATION DESCRIPTION                                   */
+    /* Main body text explaining the recommendation                 */
+    /* ------------------------------------------------------------ */
+    .rec-description {
+      color: var(--text-secondary);  /* Muted text color for readability */
+      font-size: 14px;               /* Standard body text size */
+      line-height: 1.5;              /* 1.5x line height for readability */
+      margin-bottom: 16px;           /* Space before action buttons */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* CARD ACTION BUTTONS CONTAINER                                */
+    /* Holds "Mark Complete" and "Learn More" buttons               */
+    /* ------------------------------------------------------------ */
+    .rec-actions {
+      display: flex;  /* Flexbox for horizontal button layout */
+      gap: 10px;      /* Space between buttons */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* ACTION BUTTON BASE STYLES                                    */
+    /* Common styles for all action buttons                         */
+    /* ------------------------------------------------------------ */
+    .rec-btn {
+      padding: 8px 16px;       /* Vertical and horizontal padding */
+      border-radius: 8px;      /* Rounded corners */
+      font-size: 13px;         /* Button text size */
+      font-weight: 500;        /* Medium weight for text */
+      cursor: pointer;         /* Hand cursor on hover */
+      transition: all 0.2s;    /* Smooth hover animations */
+      border: none;            /* Remove default button border */
+    }
+
+    /* PRIMARY BUTTON - Blue solid background (main action) */
+    .rec-btn.primary {
+      background: var(--accent-blue);  /* Theme blue color */
+      color: white;                     /* White text for contrast */
+    }
+
+    .rec-btn.primary:hover {
+      background: #2563eb;  /* Darker blue on hover */
+    }
+
+    /* SECONDARY BUTTON - Subtle background (secondary action) */
+    .rec-btn.secondary {
+      background: rgba(255, 255, 255, 0.05);  /* Very subtle white overlay */
+      border: 1px solid var(--border-color);   /* Visible border */
+      color: var(--text-secondary);            /* Muted text color */
+    }
+
+    .rec-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.1);  /* Slightly more visible on hover */
+      color: var(--text-primary);             /* Brighter text on hover */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* FILTER BAR                                                   */
+    /* Row of buttons to filter recommendations by priority         */
+    /* ------------------------------------------------------------ */
+    .filter-bar {
+      display: flex;        /* Flexbox for horizontal layout */
+      gap: 12px;            /* Space between filter buttons */
+      margin-bottom: 24px;  /* Space below filters before grid */
+      flex-wrap: wrap;      /* Wrap buttons on small screens */
+    }
+
+    /* FILTER BUTTON BASE STYLES */
+    .filter-btn {
+      padding: 10px 18px;                     /* Button padding */
+      border-radius: 10px;                    /* Rounded corners */
+      font-size: 13px;                        /* Text size */
+      font-weight: 500;                       /* Medium weight */
+      cursor: pointer;                        /* Hand cursor */
+      transition: all 0.2s;                   /* Smooth animations */
+      background: rgba(255, 255, 255, 0.05);  /* Subtle background */
+      border: 1px solid var(--border-color);  /* Visible border */
+      color: var(--text-secondary);           /* Muted text */
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.1);  /* Brighter on hover */
+      color: var(--text-primary);             /* Brighter text */
+    }
+
+    /* ACTIVE FILTER BUTTON - Currently selected filter */
+    .filter-btn.active {
+      background: var(--accent-blue);     /* Blue background */
+      border-color: var(--accent-blue);   /* Blue border */
+      color: white;                        /* White text */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* SUMMARY CARDS ROW                                            */
+    /* Four cards showing counts for each priority level            */
+    /* ------------------------------------------------------------ */
+    .summary-cards {
+      display: grid;                           /* Grid layout */
+      grid-template-columns: repeat(4, 1fr);   /* 4 equal-width columns */
+      gap: 16px;                               /* Space between cards */
+      margin-bottom: 24px;                     /* Space below before filters */
+    }
+
+    /* INDIVIDUAL SUMMARY CARD */
+    .summary-card {
+      background: var(--bg-card);           /* Card background */
+      border: 1px solid var(--border-color); /* Subtle border */
+      border-radius: 12px;                  /* Rounded corners */
+      padding: 16px;                        /* Internal spacing */
+      text-align: center;                   /* Center all content */
+    }
+
+    /* SUMMARY COUNT NUMBER - Large number display */
+    .summary-count {
+      font-size: 32px;       /* Large number size */
+      font-weight: 700;      /* Bold weight */
+      margin-bottom: 4px;    /* Space before label */
+    }
+
+    /* COLOR-CODED COUNT NUMBERS BY PRIORITY */
+    .summary-count.critical { color: #ef4444; }  /* Red for critical */
+    .summary-count.high { color: #f59e0b; }      /* Amber for high */
+    .summary-count.medium { color: #3b82f6; }    /* Blue for medium */
+    .summary-count.low { color: #10b981; }       /* Green for low */
+
+    /* SUMMARY LABEL TEXT */
+    .summary-label {
+      font-size: 12px;              /* Small label text */
+      color: var(--text-muted);     /* Very muted color */
+      text-transform: uppercase;    /* ALL CAPS */
+      letter-spacing: 0.05em;       /* Slight letter spacing for readability */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* EMPTY STATE                                                  */
+    /* Shown when no recommendations match current filter           */
+    /* ------------------------------------------------------------ */
+    .empty-state {
+      text-align: center;       /* Center all content */
+      padding: 60px 20px;       /* Large vertical padding */
+      color: var(--text-muted); /* Muted text color */
+    }
+
+    .empty-state svg {
+      width: 64px;           /* Icon size */
+      height: 64px;          /* Icon size */
+      margin-bottom: 16px;   /* Space below icon */
+      opacity: 0.5;          /* Semi-transparent */
+    }
+
+    .empty-state h3 {
+      font-size: 18px;               /* Heading size */
+      color: var(--text-secondary);  /* Slightly brighter than body */
+      margin-bottom: 8px;            /* Space before description */
+    }
+
+    /* ------------------------------------------------------------ */
+    /* RESPONSIVE BREAKPOINTS                                       */
+    /* Adjust layout for smaller screens                            */
+    /* ------------------------------------------------------------ */
+
+    /* TABLET BREAKPOINT (900px and below) */
+    @media (max-width: 900px) {
+      .summary-cards {
+        grid-template-columns: repeat(2, 1fr);  /* 2 columns instead of 4 */
+      }
+    }
+
+    /* MOBILE BREAKPOINT (600px and below) */
+    @media (max-width: 600px) {
+      .recommendations-grid {
+        grid-template-columns: 1fr;  /* Single column for cards */
+      }
+      .summary-cards {
+        grid-template-columns: 1fr;  /* Single column for summary */
+      }
+    }
+  </style>
+</head>
+
+<!-- ============================================================ -->
+<!-- DOCUMENT BODY                                                -->
+<!-- Contains the full page layout with sidebar and main content  -->
+<!-- ============================================================ -->
+<body>
+  <!-- APP CONTAINER: Main wrapper for entire application layout -->
+  <div class="app-container">
+    
+    <!-- ========================================================== -->
+    <!-- LEFT SIDEBAR                                               -->
+    <!-- Fixed navigation panel with logo, menu, and score card    -->
+    <!-- ========================================================== -->
+    <aside class="sidebar">
+      
+      <!-- LOGO SECTION -->
+      <!-- Brand identity at top of sidebar -->
+      <div class="logo">
+        <!-- Logo Icon: Shield with checkmark SVG -->
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Shield outline path -->
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <!-- Checkmark inside shield -->
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <!-- Logo Text: Brand name and tagline -->
+        <div class="logo-text">
+          <span class="logo-name">SafeStart</span>           <!-- Primary brand name -->
+          <span class="logo-tagline">Security Check</span>   <!-- Secondary tagline -->
+        </div>
+      </div>
+
+      <!-- NAVIGATION MENU -->
+      <!-- Main navigation links to all pages -->
+      <nav class="nav-menu">
+        
+        <!-- Dashboard Link - Grid icon representing overview -->
+        <a href="index.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Four squares representing dashboard tiles -->
+            <rect x="3" y="3" width="7" height="7"/>     <!-- Top-left tile -->
+            <rect x="14" y="3" width="7" height="7"/>    <!-- Top-right tile -->
+            <rect x="14" y="14" width="7" height="7"/>   <!-- Bottom-right tile -->
+            <rect x="3" y="14" width="7" height="7"/>    <!-- Bottom-left tile -->
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        
+        <!-- Assessment Link - Bar chart icon representing evaluation -->
+        <a href="assessment.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Three vertical bars of different heights -->
+            <path d="M9 11H3v10h6V11zM21 3h-6v18h6V3zM15 7H9v14h6V7z"/>
+          </svg>
+          <span>Assessment</span>
+        </a>
+        
+        <!-- Results Link - Clock icon representing history/results -->
+        <a href="results.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>             <!-- Clock face -->
+            <path d="M12 6v6l4 2"/>                       <!-- Clock hands -->
+          </svg>
+          <span>Results</span>
+        </a>
+        
+        <!-- Recommendations Link (ACTIVE) - Info icon for suggestions -->
+        <a href="recommendations.html" class="nav-item active">
+          <!-- 'active' class highlights current page in navigation -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>             <!-- Circle background -->
+            <path d="M12 8v4M12 16h.01"/>                 <!-- Exclamation mark -->
+          </svg>
+          <span>Recommendations</span>
+        </a>
+        
+        <!-- Reports Link - Document icon for reports -->
+        <a href="reports.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Document shape with corner fold -->
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>  <!-- Document lines -->
+          </svg>
+          <span>Reports</span>
+        </a>
+        
+        <!-- Security Tips Link - Lightbulb icon for tips -->
+        <a href="tips.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Lightbulb shape representing ideas/tips -->
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/>
+          </svg>
+          <span>Security Tips</span>
+        </a>
+        
+        <!-- Settings Link - Gear icon for configuration -->
+        <a href="settings.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>              <!-- Center circle of gear -->
+            <!-- Complex path forming gear teeth around center -->
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <!-- SECURITY SCORE CARD -->
+      <!-- Visual display of user's current security score -->
+      <div class="security-score-card">
+        <h4>Security Score</h4>   <!-- Card title -->
+        
+        <!-- SCORE CIRCLE: Animated circular progress indicator -->
+        <div class="score-circle">
+          <svg viewBox="0 0 120 120">
+            <!-- Background circle (gray track) -->
+            <circle cx="60" cy="60" r="50" class="score-bg"/>
+            <!-- Progress circle (colored arc showing score percentage) -->
+            <!-- stroke-dasharray="314" = circumference (2 * π * 50) -->
+            <!-- stroke-dashoffset controls how much is visible -->
+            <circle cx="60" cy="60" r="50" class="score-progress" id="score-circle" stroke-dasharray="314" stroke-dashoffset="150"/>
+          </svg>
+          <!-- Score number displayed in center of circle -->
+          <div class="score-value">
+            <span class="score-number" id="score-number">--</span>  <!-- Actual score, updated by JS -->
+            <span class="score-percent">%</span>                     <!-- Percent symbol -->
+          </div>
+        </div>
+        
+        <!-- Risk level label (Low Risk, Moderate Risk, High Risk) -->
+        <span class="risk-label" id="risk-label">--</span>
+        
+        <!-- Last assessment timestamp -->
+        <div class="last-assessment">
+          <span>Last Assessment</span>
+          <strong id="last-assessment-time">--</strong>  <!-- Timestamp, updated by JS -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================================================== -->
+    <!-- MAIN CONTENT AREA                                          -->
+    <!-- Primary content panel with header and recommendations      -->
+    <!-- ========================================================== -->
+    <main class="main-content">
+      
+      <!-- PAGE HEADER BAR -->
+      <!-- Top bar with tagline and action buttons -->
+      <header class="header">
+        <!-- Brand tagline -->
+        <div class="header-tagline">Evaluate · Improve · Protect</div>
+        
+        <!-- Header action buttons -->
+        <div class="header-actions">
+          
+          <!-- Theme Toggle Button (dark/light mode) -->
+          <button class="icon-btn theme-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <!-- Moon icon representing dark mode -->
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </button>
+          
+          <!-- Notifications Button with badge -->
+          <button class="icon-btn notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <!-- Bell icon -->
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            <!-- Notification count badge - shows critical + high count -->
+            <span class="notification-badge" id="notification-count">0</span>
+          </button>
+          
+          <!-- Generate Report Button - navigates to reports page -->
+          <button class="btn btn-primary generate-report-btn" onclick="window.location.href='reports.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <!-- Document with download arrow icon -->
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/>
+            </svg>
+            Generate Report
+          </button>
+          
+          <!-- User Profile Section -->
+          <div class="user-profile">
+            <!-- User Avatar: Person icon placeholder -->
+            <div class="user-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>  <!-- Body -->
+                <circle cx="12" cy="7" r="4"/>                          <!-- Head -->
+              </svg>
+            </div>
+            <!-- User display name -->
+            <span class="user-name">Anonymous</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- DASHBOARD CONTENT WRAPPER -->
+      <!-- Main scrollable content area -->
+      <div class="dashboard-content">
+        
+        <!-- PAGE HEADER SECTION -->
+        <div class="page-header">
+          <h1 class="page-title">Security Recommendations</h1>
+          <p class="page-subtitle">Prioritized actions to improve your security posture based on your latest assessment</p>
+        </div>
+
+        <!-- ====================================================== -->
+        <!-- SUMMARY CARDS SECTION                                  -->
+        <!-- Four cards showing recommendation counts by priority   -->
+        <!-- ====================================================== -->
+        <div class="summary-cards">
+          <!-- Critical Count Card - Red theme -->
+          <div class="summary-card">
+            <div class="summary-count critical" id="critical-count">0</div>  <!-- Count updated by JS -->
+            <div class="summary-label">Critical</div>
+          </div>
+          <!-- High Priority Count Card - Amber theme -->
+          <div class="summary-card">
+            <div class="summary-count high" id="high-count">0</div>  <!-- Count updated by JS -->
+            <div class="summary-label">High Priority</div>
+          </div>
+          <!-- Medium Count Card - Blue theme -->
+          <div class="summary-card">
+            <div class="summary-count medium" id="medium-count">0</div>  <!-- Count updated by JS -->
+            <div class="summary-label">Medium</div>
+          </div>
+          <!-- Low Priority Count Card - Green theme -->
+          <div class="summary-card">
+            <div class="summary-count low" id="low-count">0</div>  <!-- Count updated by JS -->
+            <div class="summary-label">Low Priority</div>
+          </div>
+        </div>
+
+        <!-- ====================================================== -->
+        <!-- FILTER BAR                                             -->
+        <!-- Buttons to filter recommendations by priority level    -->
+        <!-- ====================================================== -->
+        <div class="filter-bar">
+          <!-- 'active' class indicates currently selected filter -->
+          <button class="filter-btn active" onclick="filterRecs('all')">All</button>           <!-- Shows all recommendations -->
+          <button class="filter-btn" onclick="filterRecs('critical')">Critical</button>        <!-- Filter: critical only -->
+          <button class="filter-btn" onclick="filterRecs('high')">High</button>                <!-- Filter: high only -->
+          <button class="filter-btn" onclick="filterRecs('medium')">Medium</button>            <!-- Filter: medium only -->
+          <button class="filter-btn" onclick="filterRecs('low')">Low</button>                  <!-- Filter: low only -->
+        </div>
+
+        <!-- ====================================================== -->
+        <!-- RECOMMENDATIONS GRID                                   -->
+        <!-- Container where recommendation cards are rendered      -->
+        <!-- Content is dynamically generated by JavaScript         -->
+        <!-- ====================================================== -->
+        <div class="recommendations-grid" id="recommendations-grid">
+          <!-- Recommendations will be loaded here by renderRecommendations() -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /**
+     * ============================================================
+     * SAFESTART SECURITY RECOMMENDATIONS - JAVASCRIPT DOCUMENTATION
+     * ============================================================
+     * This script manages the security recommendations page, displaying
+     * prioritized action items based on the user's security assessment.
+     */
+
+    /**
+     * DEFAULT RECOMMENDATIONS ARRAY
+     * ----------------------------
+     * Contains 12 predefined security recommendations organized by priority.
+     * Each recommendation has:
+     *   - id: Unique numeric identifier for tracking completion
+     *   - title: Short descriptive name of the action
+     *   - description: Detailed explanation of the recommendation
+     *   - priority: Severity level (critical, high, medium, low)
+     *   - icon: Emoji visual indicator
+     *   - category: Grouping for organizational purposes
+     * 
+     * Priority Levels:
+     *   - critical: Immediate action required, poses significant risk
+     *   - high: Important, should be addressed soon
+     *   - medium: Should be planned for implementation
+     *   - low: Good practice, implement when possible
+     */
+    const defaultRecommendations = [
+      /**
+       * RECOMMENDATION #1: Enable Multi-Factor Authentication
+       * Priority: CRITICAL | Category: Access Control
+       * 
+       * Why Critical: MFA prevents 99.9% of account compromise attacks.
+       * Even if credentials are stolen via phishing or breach, attackers
+       * cannot access accounts without the second factor.
+       * 
+       * Implementation: Enable via account security settings, use 
+       * authenticator apps (Google Authenticator, Authy) over SMS.
+       */
+      {
+        id: 1,
+        title: 'Enable Multi-Factor Authentication',
+        description: 'Add an extra layer of security by requiring a second form of verification. This significantly reduces the risk of unauthorized access even if passwords are compromised.',
+        priority: 'critical',
+        icon: '🔐',
+        category: 'Access Control'
+      },
+      /**
+       * RECOMMENDATION #2: Update Firewall Rules
+       * Priority: CRITICAL | Category: Network Security
+       * 
+       * Why Critical: Outdated firewall rules leave unnecessary ports
+       * open, creating attack vectors. Default-deny policies with
+       * explicit allow rules are essential for security.
+       * 
+       * Implementation: Review all inbound/outbound rules, remove
+       * deprecated entries, close unused ports, enable logging.
+       */
+      {
+        id: 2,
+        title: 'Update Firewall Rules',
+        description: 'Review and update your firewall configurations to block unauthorized access. Remove outdated rules and ensure only necessary ports are open.',
+        priority: 'critical',
+        icon: '🛡️',
+        category: 'Network Security'
+      },
+      /**
+       * RECOMMENDATION #3: Implement Password Policy
+       * Priority: HIGH | Category: Access Control
+       * 
+       * Why High: Weak passwords remain a top attack vector. Policy
+       * enforcement ensures consistent security across all accounts.
+       * 
+       * Requirements: Minimum 12 characters, mixed case, numbers,
+       * special characters. Consider passphrases for better security
+       * and memorability. Rotation every 90 days or on breach detection.
+       */
+      {
+        id: 3,
+        title: 'Implement Password Policy',
+        description: 'Enforce strong password requirements including minimum length, complexity, and regular rotation. Consider using a password manager for teams.',
+        priority: 'high',
+        icon: '🔑',
+        category: 'Access Control'
+      },
+      /**
+       * RECOMMENDATION #4: Enable Data Encryption
+       * Priority: HIGH | Category: Data Protection
+       * 
+       * Why High: Encryption protects data confidentiality even if
+       * physical or network security is breached.
+       * 
+       * At Rest: Use AES-256 for databases and file storage.
+       * In Transit: Require TLS 1.3, disable older protocols.
+       * Key Management: Secure key storage, regular rotation.
+       */
+      {
+        id: 4,
+        title: 'Enable Data Encryption',
+        description: 'Encrypt sensitive data both at rest and in transit. Use TLS 1.3 for network communications and AES-256 for stored data.',
+        priority: 'high',
+        icon: '🔒',
+        category: 'Data Protection'
+      },
+      /**
+       * RECOMMENDATION #5: Set Up Security Monitoring
+       * Priority: HIGH | Category: Monitoring
+       * 
+       * Why High: Without monitoring, breaches go undetected for
+       * average of 287 days (IBM Cost of Data Breach Report).
+       * 
+       * Implementation: SIEM deployment, centralized logging,
+       * alert thresholds for: failed logins (>5), privilege escalation,
+       * unusual data access, off-hours activity, new admin accounts.
+       */
+      {
+        id: 5,
+        title: 'Set Up Security Monitoring',
+        description: 'Deploy centralized logging and monitoring to detect suspicious activities. Configure alerts for failed login attempts and unusual access patterns.',
+        priority: 'high',
+        icon: '📡',
+        category: 'Monitoring'
+      },
+      /**
+       * RECOMMENDATION #6: Conduct Security Training
+       * Priority: MEDIUM | Category: Security Awareness
+       * 
+       * Why Medium: Human error causes 95% of breaches. Training
+       * reduces successful phishing attacks by up to 80%.
+       * 
+       * Topics: Phishing identification, password hygiene, social
+       * engineering, safe browsing, incident reporting, data handling.
+       * Frequency: Initial + quarterly refreshers + simulated attacks.
+       */
+      {
+        id: 6,
+        title: 'Conduct Security Training',
+        description: 'Provide regular security awareness training for all employees. Cover phishing recognition, safe browsing, and incident reporting procedures.',
+        priority: 'medium',
+        icon: '📚',
+        category: 'Security Awareness'
+      },
+      /**
+       * RECOMMENDATION #7: Create Incident Response Plan
+       * Priority: MEDIUM | Category: Incident Response
+       * 
+       * Why Medium: Without a plan, incident response is chaotic
+       * and ineffective, extending breach impact and recovery time.
+       * 
+       * Components: Detection procedures, escalation paths, roles &
+       * responsibilities, communication templates, containment steps,
+       * evidence preservation, recovery procedures, post-mortem process.
+       */
+      {
+        id: 7,
+        title: 'Create Incident Response Plan',
+        description: 'Document procedures for responding to security incidents. Include roles, communication plans, and recovery steps.',
+        priority: 'medium',
+        icon: '📋',
+        category: 'Incident Response'
+      },
+      /**
+       * RECOMMENDATION #8: Regular Backup Testing
+       * Priority: MEDIUM | Category: Data Protection
+       * 
+       * Why Medium: Untested backups often fail when needed most.
+       * Ransomware recovery depends entirely on backup integrity.
+       * 
+       * Best Practice: Follow 3-2-1 rule (3 copies, 2 media types,
+       * 1 offsite). Test restoration monthly. Verify data integrity.
+       * Measure RTO (Recovery Time Objective) meets business needs.
+       */
+      {
+        id: 8,
+        title: 'Regular Backup Testing',
+        description: 'Test your backup and recovery procedures regularly. Verify that backups are complete and can be restored successfully.',
+        priority: 'medium',
+        icon: '💾',
+        category: 'Data Protection'
+      },
+      /**
+       * RECOMMENDATION #9: Network Segmentation
+       * Priority: MEDIUM | Category: Network Security
+       * 
+       * Why Medium: Segmentation limits lateral movement after breach,
+       * containing damage to specific network zones.
+       * 
+       * Implementation: Separate by function (prod/dev/test), by
+       * sensitivity (PCI, PII zones), by trust level (internal/DMZ).
+       * Use VLANs, firewalls between segments, zero-trust model.
+       */
+      {
+        id: 9,
+        title: 'Network Segmentation',
+        description: 'Separate critical systems and data into different network segments. This limits the impact of a potential breach.',
+        priority: 'medium',
+        icon: '🌐',
+        category: 'Network Security'
+      },
+      /**
+       * RECOMMENDATION #10: Review User Access Rights
+       * Priority: LOW | Category: Access Control
+       * 
+       * Why Low: Important for hygiene but lower immediate risk.
+       * Reduces attack surface from compromised accounts.
+       * 
+       * Principle of Least Privilege: Users get minimum access needed.
+       * Review quarterly. Revoke on role change/termination immediately.
+       * Use role-based access control (RBAC) for scalability.
+       */
+      {
+        id: 10,
+        title: 'Review User Access Rights',
+        description: 'Audit user permissions and remove unnecessary access. Apply the principle of least privilege.',
+        priority: 'low',
+        icon: '👥',
+        category: 'Access Control'
+      },
+      /**
+       * RECOMMENDATION #11: Update Security Documentation
+       * Priority: LOW | Category: Compliance
+       * 
+       * Why Low: Documentation supports compliance and knowledge
+       * transfer but isn't an immediate security control.
+       * 
+       * Documents to Maintain: Security policies, network diagrams,
+       * asset inventory, configuration standards, change logs,
+       * vendor security assessments, compliance evidence.
+       */
+      {
+        id: 11,
+        title: 'Update Security Documentation',
+        description: 'Keep security policies and procedures up to date. Document all security configurations and changes.',
+        priority: 'low',
+        icon: '📝',
+        category: 'Compliance'
+      },
+      /**
+       * RECOMMENDATION #12: Schedule Penetration Testing
+       * Priority: LOW | Category: Assessment
+       * 
+       * Why Low: Valuable for validation but typically annual.
+       * Other controls provide more immediate protection.
+       * 
+       * Types: External (perimeter), Internal (insider threat),
+       * Web application, Social engineering, Physical security.
+       * Frequency: Annual minimum, after major changes.
+       */
+      {
+        id: 12,
+        title: 'Schedule Penetration Testing',
+        description: 'Plan regular penetration tests to identify vulnerabilities before attackers do. Consider both internal and external testing.',
+        priority: 'low',
+        icon: '🔍',
+        category: 'Assessment'
+      }
+    ];
+
+    /**
+     * STATE VARIABLES
+     * ---------------
+     * recommendations: Currently displayed recommendations (can be filtered subset)
+     * currentFilter: Active priority filter ('all', 'critical', 'high', 'medium', 'low')
+     */
+    let recommendations = [];   // Holds the active/displayed recommendations array
+    let currentFilter = 'all';  // Tracks which priority filter is currently active
+
+    /**
+     * getRiskClass(riskLevel)
+     * -----------------------
+     * Maps risk level text to CSS class names for styling.
+     * Used to apply appropriate colors to risk indicators.
+     * 
+     * @param {string} riskLevel - Risk level text (e.g., "Low Risk", "Moderate Risk")
+     * @returns {string} CSS class name ('low', 'medium', or 'high')
+     */
+    function getRiskClass(riskLevel) {
+      if (riskLevel.includes('Low')) return 'low';       // Green styling
+      if (riskLevel.includes('Moderate')) return 'medium'; // Blue/yellow styling
+      return 'high';                                       // Red styling (default)
+    }
+
+    /**
+     * renderRecommendations(recs)
+     * ---------------------------
+     * Renders the recommendation cards to the DOM grid.
+     * Handles empty state when no recommendations match filters.
+     * 
+     * @param {Array} recs - Array of recommendation objects to display
+     * 
+     * Card Structure:
+     *   - Header: Icon + Title + Priority badge
+     *   - Body: Description text
+     *   - Actions: "Mark Complete" and "Learn More" buttons
+     */
+    function renderRecommendations(recs) {
+      const grid = document.getElementById('recommendations-grid');
+      
+      // Handle empty state - show message prompting user to take assessment
+      if (!recs || recs.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 12l2 2 4-4"/>
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <h3>No recommendations found</h3>
+            <p>Complete a security assessment to get personalized recommendations</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Generate HTML for each recommendation card using template literals
+      // data-priority attribute enables CSS targeting and potential JS filtering
+      grid.innerHTML = recs.map(rec => `
+        <div class="rec-card" data-priority="${rec.priority}">
+          <div class="rec-header">
+            <div class="rec-icon ${rec.priority}">${rec.icon}</div>
+            <div>
+              <div class="rec-title">${rec.title}</div>
+              <span class="rec-priority ${rec.priority}">${rec.priority}</span>
+            </div>
+          </div>
+          <p class="rec-description">${rec.description}</p>
+          <div class="rec-actions">
+            <button class="rec-btn primary" onclick="markComplete(${rec.id})">Mark Complete</button>
+            <button class="rec-btn secondary" onclick="learnMore(${rec.id})">Learn More</button>
+          </div>
+        </div>
+      `).join('');  // Join array elements without separator
+    }
+
+    /**
+     * filterRecs(priority)
+     * --------------------
+     * Filters displayed recommendations by priority level.
+     * Updates UI to reflect active filter state.
+     * 
+     * @param {string} priority - Priority to filter by ('all', 'critical', 'high', 'medium', 'low')
+     * 
+     * Process:
+     *   1. Update currentFilter state
+     *   2. Update filter button active states
+     *   3. Filter recommendations array
+     *   4. Re-render the filtered results
+     */
+    function filterRecs(priority) {
+      currentFilter = priority;
+      
+      // Update button states - remove active from all, add to matching button
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase() === priority || (priority === 'all' && btn.textContent === 'All')) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Filter recommendations array based on priority
+      // 'all' shows everything, otherwise filter by exact priority match
+      const filtered = priority === 'all' 
+        ? recommendations 
+        : recommendations.filter(r => r.priority === priority);
+      
+      renderRecommendations(filtered);
+    }
+
+    /**
+     * updateCounts()
+     * --------------
+     * Calculates and displays the count of recommendations by priority.
+     * Updates the summary cards and notification badge.
+     * 
+     * Summary Cards: Show count for each priority level
+     * Notification Badge: Shows critical + high count (urgent items)
+     */
+    function updateCounts() {
+      // Calculate counts for each priority level
+      const counts = {
+        critical: recommendations.filter(r => r.priority === 'critical').length,
+        high: recommendations.filter(r => r.priority === 'high').length,
+        medium: recommendations.filter(r => r.priority === 'medium').length,
+        low: recommendations.filter(r => r.priority === 'low').length
+      };
+
+      // Update DOM elements with calculated counts
+      document.getElementById('critical-count').textContent = counts.critical;
+      document.getElementById('high-count').textContent = counts.high;
+      document.getElementById('medium-count').textContent = counts.medium;
+      document.getElementById('low-count').textContent = counts.low;
+      
+      // Notification badge shows urgent items (critical + high priority)
+      document.getElementById('notification-count').textContent = counts.critical + counts.high;
+    }
+
+    /**
+     * markComplete(id)
+     * ----------------
+     * Removes a recommendation from the list when user marks it complete.
+     * Updates counts and re-renders to reflect the change.
+     * 
+     * @param {number} id - The unique ID of the recommendation to remove
+     * 
+     * Note: In production, this would also persist to backend storage.
+     * Currently only updates client-side state (resets on page reload).
+     */
+    function markComplete(id) {
+      // Filter out the completed recommendation by ID
+      recommendations = recommendations.filter(r => r.id !== id);
+      updateCounts();           // Recalculate summary counts
+      filterRecs(currentFilter); // Re-render with current filter applied
+    }
+
+    /**
+     * learnMore(id)
+     * -------------
+     * Navigates user to the Security Tips page for detailed guidance.
+     * 
+     * @param {number} id - The recommendation ID (currently unused, redirects to tips page)
+     * 
+     * Future Enhancement: Could link to specific tip based on recommendation
+     * category mapping (e.g., password recommendation -> password tips section)
+     */
+    function learnMore(id) {
+      window.location.href = 'tips.html';
+    }
+
+    /**
+     * loadData()
+     * ----------
+     * Async function that fetches dashboard data and generates recommendations.
+     * Adapts recommendation set based on user's current security score.
+     * 
+     * API Endpoint: GET /api/dashboard
+     * Response: { overallScore: number, riskLevel: string, ... }
+     * 
+     * Recommendation Logic (score-based):
+     *   - Score >= 80: Show only low/medium priority (user is well-protected)
+     *   - Score >= 60: Show all except critical (moderate protection)
+     *   - Score < 60:  Show all recommendations (needs significant improvement)
+     * 
+     * Fallback: If API fails, use all default recommendations
+     */
+    async function loadData() {
+      try {
+        const response = await fetch('/api/dashboard');
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Update sidebar security score circle
+          document.getElementById('score-number').textContent = data.overallScore;
+          const scoreCircle = document.getElementById('score-circle');
+          // Calculate stroke-dashoffset: 314 is full circle circumference (2πr where r=50)
+          // Offset decreases as score increases (more of circle is visible)
+          const offset = 314 - (314 * data.overallScore / 100);
+          scoreCircle.style.strokeDashoffset = offset;
+
+          // Update risk level label with appropriate styling
+          const riskLabel = document.getElementById('risk-label');
+          riskLabel.textContent = data.riskLevel;
+          riskLabel.className = 'risk-label ' + getRiskClass(data.riskLevel);
+
+          // Generate recommendations based on security score
+          // Higher scores = fewer/lower priority recommendations
+          if (data.overallScore >= 80) {
+            // Excellent security: only show low/medium priority maintenance items
+            recommendations = defaultRecommendations.filter(r => r.priority === 'low' || r.priority === 'medium').slice(0, 4);
+          } else if (data.overallScore >= 60) {
+            // Moderate security: exclude critical (already handled), show up to 8 items
+            recommendations = defaultRecommendations.filter(r => r.priority !== 'critical').slice(0, 8);
+          } else {
+            // Poor security: show all recommendations including critical
+            recommendations = [...defaultRecommendations];
+          }
+        }
+      } catch (error) {
+        // API unavailable - use full default recommendations set
+        console.log('Using default recommendations');
+        recommendations = [...defaultRecommendations];
+      }
+
+      // Initialize UI with loaded/default recommendations
+      // Update UI counts and render recommendation cards
+      updateCounts();                         // Refresh summary card counts
+      renderRecommendations(recommendations); // Render cards to grid
+    }
+
+    // ============================================================
+    // INITIALIZATION
+    // ============================================================
+    // Load data and render recommendations when page loads
+    // This is called immediately when the script executes
+    loadData();  // Start the async data loading process
+  </script>
+  <!-- End of JavaScript section -->
+
+</body>
+<!-- End of document body -->
+
+</html>
+<!-- End of SafeStart Recommendations Page -->
+<!-- ============================================================ -->
+<!-- FILE SUMMARY:                                                 -->
+<!-- - 12 default security recommendations (critical/high/med/low) -->
+<!-- - Dynamic filtering by priority level                         -->
+<!-- - Summary cards showing counts per priority                   -->
+<!-- - Score-based recommendation selection from API               -->
+<!-- - Mark complete and learn more actions                        -->
+<!-- ============================================================ -->
