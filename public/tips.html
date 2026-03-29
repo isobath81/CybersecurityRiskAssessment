@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<!-- Declares HTML5 document type for modern browser rendering -->
+<html lang="en">
+<!-- Root HTML element with English language attribute for accessibility and SEO -->
+<head>
+  <!-- Head section contains metadata, styles, and external resources -->
+  <meta charset="UTF-8">
+  <!-- Sets character encoding to UTF-8 for international character support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Enables responsive design by setting viewport to device width -->
+  <title>SafeStart Security Check - Security Tips</title>
+  <!-- Page title displayed in browser tab and search results -->
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Links to main stylesheet containing global styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Loads Inter font from Google Fonts with multiple weight variants -->
+  <style>
+    /* Page-specific styles embedded in the document */
+    
+    /* PAGE HEADER STYLES */
+    .page-header {
+      margin-bottom: 24px;
+      /* Adds spacing below the page header section */
+    }
+
+    .page-title {
+      font-size: 28px;
+      /* Sets large font size for main page title */
+      font-weight: 700;
+      /* Makes the title bold (700 = bold weight) */
+      margin-bottom: 8px;
+      /* Small spacing between title and subtitle */
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      /* Uses CSS variable for secondary/muted text color */
+      font-size: 14px;
+      /* Smaller font for descriptive subtitle */
+    }
+
+    /* TIPS CONTAINER - Main layout wrapper */
+    .tips-container {
+      display: flex;
+      /* Enables flexbox layout for sidebar + main content */
+      gap: 24px;
+      /* Creates 24px spacing between sidebar and main area */
+    }
+
+    /* SIDEBAR STYLES */
+    .tips-sidebar {
+      width: 260px;
+      /* Fixed width for category sidebar */
+      flex-shrink: 0;
+      /* Prevents sidebar from shrinking on smaller screens */
+    }
+
+    .tips-main {
+      flex: 1;
+      /* Main content takes remaining available space */
+    }
+
+    /* CATEGORY LIST - Navigation for tip categories */
+    .category-list {
+      background: var(--bg-card);
+      /* Card background color from CSS variables */
+      border: 1px solid var(--border-color);
+      /* Subtle border around category list */
+      border-radius: 16px;
+      /* Rounded corners for modern look */
+      overflow: hidden;
+      /* Clips child elements to rounded corners */
+    }
+
+    /* Individual category item in the sidebar */
+    .category-item {
+      padding: 14px 18px;
+      /* Internal spacing for clickable area */
+      display: flex;
+      /* Flexbox for icon + text + count layout */
+      align-items: center;
+      /* Vertically centers all elements */
+      gap: 12px;
+      /* Space between icon, name, and count */
+      cursor: pointer;
+      /* Shows hand cursor indicating clickable */
+      transition: all 0.2s;
+      /* Smooth animation for hover effects */
+      border-bottom: 1px solid var(--border-color);
+      /* Separator line between categories */
+      color: var(--text-secondary);
+      /* Muted text color for inactive items */
+    }
+
+    .category-item:last-child {
+      border-bottom: none;
+      /* Removes border from last item to avoid double border */
+    }
+
+    .category-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      /* Subtle highlight on mouse hover */
+      color: var(--text-primary);
+      /* Brighter text color on hover */
+    }
+
+    /* Active/selected category styling */
+    .category-item.active {
+      background: rgba(59, 130, 246, 0.1);
+      /* Light blue background for selected category */
+      color: var(--accent-blue);
+      /* Blue text for selected category */
+      border-left: 3px solid var(--accent-blue);
+      /* Blue left border indicator */
+    }
+
+    .category-icon {
+      font-size: 18px;
+      /* Size for emoji icons in categories */
+    }
+
+    .category-name {
+      font-size: 14px;
+      /* Text size for category names */
+      font-weight: 500;
+      /* Medium weight for readability */
+    }
+
+    /* Category count badge showing number of tips */
+    .category-count {
+      margin-left: auto;
+      /* Pushes count to the right side */
+      background: rgba(255, 255, 255, 0.1);
+      /* Semi-transparent background */
+      padding: 2px 8px;
+      /* Compact padding for badge */
+      border-radius: 10px;
+      /* Pill-shaped rounded corners */
+      font-size: 11px;
+      /* Small text for count numbers */
+      font-weight: 600;
+      /* Semi-bold for visibility */
+    }
+
+    /* TIPS GRID - Container for tip cards */
+    .tips-grid {
+      display: grid;
+      /* CSS Grid layout for tip cards */
+      gap: 20px;
+      /* Spacing between tip cards */
+    }
+
+    /* TIP CARD - Individual security tip container */
+    .tip-card {
+      background: var(--bg-card);
+      /* Card background color */
+      border: 1px solid var(--border-color);
+      /* Subtle border around card */
+      border-radius: 16px;
+      /* Rounded corners */
+      padding: 24px;
+      /* Internal spacing */
+      transition: all 0.2s;
+      /* Smooth hover animation */
+    }
+
+    .tip-card:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      /* Blue-tinted border on hover for interactivity feedback */
+    }
+
+    /* Tip card header with icon and title */
+    .tip-header {
+      display: flex;
+      /* Flexbox for icon + title layout */
+      align-items: flex-start;
+      /* Aligns items to top */
+      gap: 16px;
+      /* Space between icon and title area */
+      margin-bottom: 16px;
+      /* Space below header */
+    }
+
+    /* Large icon container for each tip */
+    .tip-icon {
+      width: 50px;
+      /* Fixed width for icon box */
+      height: 50px;
+      /* Fixed height for icon box */
+      border-radius: 12px;
+      /* Rounded corners */
+      display: flex;
+      /* Centers emoji icon */
+      align-items: center;
+      /* Vertical centering */
+      justify-content: center;
+      /* Horizontal centering */
+      font-size: 24px;
+      /* Large emoji size */
+      background: rgba(59, 130, 246, 0.15);
+      /* Light blue background */
+      flex-shrink: 0;
+      /* Prevents icon from shrinking */
+    }
+
+    .tip-title {
+      font-size: 18px;
+      /* Medium-large title text */
+      font-weight: 600;
+      /* Semi-bold for emphasis */
+      margin-bottom: 6px;
+      /* Small space below title */
+    }
+
+    /* Small tag showing tip category */
+    .tip-category-tag {
+      display: inline-block;
+      /* Allows padding on inline element */
+      padding: 4px 10px;
+      /* Internal spacing */
+      border-radius: 6px;
+      /* Slightly rounded corners */
+      font-size: 11px;
+      /* Small text */
+      font-weight: 600;
+      /* Semi-bold */
+      background: rgba(255, 255, 255, 0.05);
+      /* Very subtle background */
+      color: var(--text-muted);
+      /* Muted text color */
+      text-transform: uppercase;
+      /* ALL CAPS style */
+      letter-spacing: 0.03em;
+      /* Slight letter spacing for readability */
+    }
+
+    /* Main content/description of the tip */
+    .tip-content {
+      color: var(--text-secondary);
+      /* Secondary text color */
+      font-size: 14px;
+      /* Standard readable size */
+      line-height: 1.7;
+      /* Generous line height for readability */
+      margin-bottom: 16px;
+      /* Space below content */
+    }
+
+    /* Container for step-by-step instructions */
+    .tip-steps {
+      background: rgba(255, 255, 255, 0.02);
+      /* Very subtle background differentiation */
+      border-radius: 10px;
+      /* Rounded corners */
+      padding: 16px;
+      /* Internal spacing */
+      margin-bottom: 16px;
+      /* Space below steps section */
+    }
+
+    .tip-steps h4 {
+      font-size: 13px;
+      /* Small heading size */
+      font-weight: 600;
+      /* Semi-bold */
+      margin-bottom: 12px;
+      /* Space below heading */
+      color: var(--text-secondary);
+      /* Muted heading color */
+      text-transform: uppercase;
+      /* ALL CAPS style */
+      letter-spacing: 0.03em;
+      /* Letter spacing for uppercase text */
+    }
+
+    /* Individual step row */
+    .tip-step {
+      display: flex;
+      /* Flexbox for number + text layout */
+      align-items: flex-start;
+      /* Aligns to top for multi-line text */
+      gap: 12px;
+      /* Space between number and text */
+      margin-bottom: 10px;
+      /* Space between steps */
+    }
+
+    .tip-step:last-child {
+      margin-bottom: 0;
+      /* Removes margin from last step */
+    }
+
+    /* Circular step number badge */
+    .step-number {
+      width: 24px;
+      /* Fixed width for circle */
+      height: 24px;
+      /* Fixed height for circle */
+      border-radius: 50%;
+      /* Makes it a circle */
+      background: var(--accent-blue);
+      /* Blue background */
+      color: white;
+      /* White number text */
+      display: flex;
+      /* Centers the number */
+      align-items: center;
+      /* Vertical centering */
+      justify-content: center;
+      /* Horizontal centering */
+      font-size: 12px;
+      /* Small number size */
+      font-weight: 600;
+      /* Semi-bold */
+      flex-shrink: 0;
+      /* Prevents shrinking */
+    }
+
+    /* Text content of each step */
+    .step-text {
+      font-size: 13px;
+      /* Readable text size */
+      color: var(--text-secondary);
+      /* Secondary text color */
+      line-height: 1.5;
+      /* Good line height */
+      padding-top: 2px;
+      /* Aligns with step number center */
+    }
+
+    /* Footer section of tip card with metadata */
+    /* Footer section of tip card with metadata */
+    .tip-footer {
+      display: flex;
+      /* Flexbox for metadata layout */
+      align-items: center;
+      /* Vertically centers items */
+      justify-content: space-between;
+      /* Spreads items to edges */
+      padding-top: 16px;
+      /* Space above footer */
+      border-top: 1px solid var(--border-color);
+      /* Separator line from content */
+    }
+
+    /* Container for metadata items (difficulty, time) */
+    .tip-meta {
+      display: flex;
+      /* Horizontal layout for meta items */
+      gap: 16px;
+      /* Space between difficulty and time */
+    }
+
+    /* Individual metadata item (icon + text) */
+    .tip-meta-item {
+      display: flex;
+      /* Horizontal layout */
+      align-items: center;
+      /* Vertically centers icon and text */
+      gap: 6px;
+      /* Small space between icon and text */
+      color: var(--text-muted);
+      /* Muted color for metadata */
+      font-size: 12px;
+      /* Small text size */
+    }
+
+    .tip-meta-item svg {
+      width: 14px;
+      /* Small icon size */
+      height: 14px;
+      /* Matching height */
+    }
+
+    /* Link style (currently not used but available) */
+    .tip-link {
+      display: flex;
+      /* Horizontal layout */
+      align-items: center;
+      /* Vertically centers */
+      gap: 6px;
+      /* Space between text and icon */
+      color: var(--accent-blue);
+      /* Blue link color */
+      font-size: 13px;
+      /* Readable link text */
+      font-weight: 500;
+      /* Medium weight */
+      text-decoration: none;
+      /* Removes underline */
+    }
+
+    .tip-link:hover {
+      text-decoration: underline;
+      /* Shows underline on hover */
+    }
+
+    .tip-link svg {
+      width: 14px;
+      /* Small icon */
+      height: 14px;
+      /* Matching height */
+    }
+
+    /* SEARCH BOX STYLES */
+    .search-box {
+      margin-bottom: 20px;
+      /* Space below search box */
+    }
+
+    .search-input {
+      width: 100%;
+      /* Full width input */
+      padding: 14px 18px;
+      /* Internal spacing */
+      padding-left: 48px;
+      /* Extra left padding for search icon */
+      border: 1px solid var(--border-color);
+      /* Subtle border */
+      border-radius: 12px;
+      /* Rounded corners */
+      background: var(--bg-card);
+      /* Card background color */
+      color: var(--text-primary);
+      /* Primary text color for input */
+      font-size: 14px;
+      /* Readable font size */
+    }
+
+    .search-input:focus {
+      outline: none;
+      /* Removes default browser outline */
+      border-color: var(--accent-blue);
+      /* Blue border when focused */
+    }
+
+    /* Wrapper for search input with icon overlay */
+    .search-wrapper {
+      position: relative;
+      /* Enables absolute positioning for icon */
+    }
+
+    .search-wrapper svg {
+      position: absolute;
+      /* Positions icon inside input */
+      left: 16px;
+      /* Distance from left edge */
+      top: 50%;
+      /* Vertically centers */
+      transform: translateY(-50%);
+      /* Precise vertical centering */
+      width: 18px;
+      /* Icon size */
+      height: 18px;
+      /* Matching height */
+      color: var(--text-muted);
+      /* Muted icon color */
+    }
+
+    /* QUICK TIPS SIDEBAR SECTION */
+    .quick-tips {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+      /* Gradient background from blue to purple */
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      /* Blue-tinted border */
+      border-radius: 16px;
+      /* Rounded corners */
+      padding: 20px;
+      /* Internal spacing */
+      margin-top: 20px;
+      /* Space above quick tips section */
+    }
+
+    .quick-tips h4 {
+      font-size: 14px;
+      /* Heading size */
+      font-weight: 600;
+      /* Semi-bold */
+      margin-bottom: 12px;
+      /* Space below heading */
+      display: flex;
+      /* For icon + text layout */
+      align-items: center;
+      /* Vertically centers */
+      gap: 8px;
+      /* Space between icon and text */
+    }
+
+    /* Individual quick tip item */
+    .quick-tip-item {
+      display: flex;
+      /* Horizontal layout */
+      align-items: center;
+      /* Vertically centers */
+      gap: 10px;
+      /* Space between checkmark and text */
+      padding: 10px 0;
+      /* Vertical padding */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      /* Subtle separator */
+      font-size: 13px;
+      /* Readable text size */
+      color: var(--text-secondary);
+      /* Secondary text color */
+    }
+
+    .quick-tip-item:last-child {
+      border-bottom: none;
+      /* Removes border from last item */
+      padding-bottom: 0;
+      /* Removes bottom padding from last item */
+    }
+
+    /* Green checkmark for quick tips */
+    .quick-tip-check {
+      color: #10b981;
+      /* Green color for success/check */
+    }
+
+    /* RESPONSIVE DESIGN - Mobile/tablet breakpoint */
+    @media (max-width: 900px) {
+      .tips-container {
+        flex-direction: column;
+        /* Stacks sidebar above main content */
+      }
+      .tips-sidebar {
+        width: 100%;
+        /* Full width on mobile */
+      }
+      .category-list {
+        display: flex;
+        /* Horizontal scrollable categories */
+        overflow-x: auto;
+        /* Enables horizontal scrolling */
+        white-space: nowrap;
+        /* Prevents category wrapping */
+      }
+      .category-item {
+        border-bottom: none;
+        /* Removes bottom border */
+        border-right: 1px solid var(--border-color);
+        /* Adds right border as separator */
+      }
+      .category-item.active {
+        border-left: none;
+        /* Removes left indicator */
+        border-bottom: 3px solid var(--accent-blue);
+        /* Bottom indicator for mobile */
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Body element - contains all visible page content -->
+  <div class="app-container">
+    <!-- Main app wrapper - provides overall layout structure -->
+    
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <!-- Contains logo, navigation menu, and security score card -->
+    <aside class="sidebar">
+      <!-- Sidebar element for navigation and branding -->
+      
+      <!-- LOGO SECTION -->
+      <div class="logo">
+        <!-- Logo container with icon and text -->
+        <div class="logo-icon">
+          <!-- Shield icon representing security -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- SVG shield path with checkmark -->
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <!-- Shield outline path -->
+            <path d="M9 12l2 2 4-4"/>
+            <!-- Checkmark inside shield -->
+          </svg>
+        </div>
+        <div class="logo-text">
+          <!-- Text portion of logo -->
+          <span class="logo-name">SafeStart</span>
+          <!-- Application name -->
+          <span class="logo-tagline">Security Check</span>
+          <!-- Application tagline/subtitle -->
+        </div>
+      </div>
+
+      <!-- NAVIGATION MENU -->
+      <nav class="nav-menu">
+        <!-- Main navigation container -->
+        
+        <!-- Dashboard Link -->
+        <a href="index.html" class="nav-item">
+          <!-- Navigation link to dashboard page -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Grid icon representing dashboard -->
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+          <!-- Link text -->
+        </a>
+        
+        <!-- Assessment Link -->
+        <a href="assessment.html" class="nav-item">
+          <!-- Navigation link to assessment page -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Bar chart icon representing assessment -->
+            <path d="M9 11H3v10h6V11zM21 3h-6v18h6V3zM15 7H9v14h6V7z"/>
+          </svg>
+          <span>Assessment</span>
+        </a>
+        
+        <!-- Results Link -->
+        <a href="results.html" class="nav-item">
+          <!-- Navigation link to results page -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Clock icon representing results history -->
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <span>Results</span>
+        </a>
+        
+        <!-- Recommendations Link -->
+        <a href="recommendations.html" class="nav-item">
+          <!-- Navigation link to recommendations page -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Info circle icon representing recommendations -->
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v4M12 16h.01"/>
+          </svg>
+          <span>Recommendations</span>
+        </a>
+        
+        <!-- Reports Link -->
+        <a href="reports.html" class="nav-item">
+          <!-- Navigation link to reports page -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Document icon representing reports -->
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+          </svg>
+          <span>Reports</span>
+        </a>
+        
+        <!-- Security Tips Link (ACTIVE PAGE) -->
+        <a href="tips.html" class="nav-item active">
+          <!-- Navigation link to tips page - marked as active -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Lightbulb icon representing tips/ideas -->
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/>
+          </svg>
+          <span>Security Tips</span>
+        </a>
+        
+        <!-- Settings Link -->
+        <a href="settings.html" class="nav-item">
+          <!-- Navigation link to settings page -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Gear/cog icon representing settings -->
+            <circle cx="12" cy="12" r="3"/>
+            <!-- Center circle of gear icon -->
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+            <!-- Complex path drawing gear teeth around center circle -->
+          </svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+      <!-- End of navigation menu -->
+
+      <!-- SECURITY SCORE CARD -->
+      <!-- Displays current security score in sidebar -->
+      <div class="security-score-card">
+        <h4>Security Score</h4>
+        <!-- Card heading -->
+        
+        <!-- Circular score visualization -->
+        <div class="score-circle">
+          <svg viewBox="0 0 120 120">
+            <!-- SVG container for circular progress indicator -->
+            <circle cx="60" cy="60" r="50" class="score-bg"/>
+            <!-- Background circle (gray track) - center at 60,60 with radius 50 -->
+            <circle cx="60" cy="60" r="50" class="score-progress" id="score-circle" stroke-dasharray="314" stroke-dashoffset="150"/>
+            <!-- Progress circle - stroke-dasharray is circumference (2πr ≈ 314), stroke-dashoffset controls fill amount -->
+          </svg>
+          <div class="score-value">
+            <!-- Text overlay showing numeric score -->
+            <span class="score-number" id="score-number">--</span>
+            <!-- Actual score number - populated by JavaScript -->
+            <span class="score-percent">%</span>
+            <!-- Percent symbol -->
+          </div>
+        </div>
+        
+        <span class="risk-label" id="risk-label">--</span>
+        <!-- Risk level text (Low/Moderate/High) - populated by JavaScript -->
+        
+        <div class="last-assessment">
+          <!-- Shows when last assessment was taken -->
+          <span>Last Assessment</span>
+          <strong id="last-assessment-time">--</strong>
+          <!-- Timestamp - populated by JavaScript -->
+        </div>
+      </div>
+    </aside>
+    <!-- End of sidebar -->
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <main class="main-content">
+      <!-- Main content wrapper -->
+      
+      <!-- TOP HEADER BAR -->
+      <header class="header">
+        <div class="header-tagline">Evaluate · Improve · Protect</div>
+        <!-- Application tagline/motto -->
+        
+        <div class="header-actions">
+          <!-- Container for header action buttons -->
+          
+          <!-- Theme Toggle Button -->
+          <button class="icon-btn theme-toggle">
+            <!-- Toggles between light and dark mode -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+              <!-- Moon icon for dark mode indicator -->
+            </svg>
+          </button>
+          
+          <!-- Notifications Button -->
+          <button class="icon-btn notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+              <!-- Bell icon for notifications -->
+            </svg>
+            <span class="notification-badge">0</span>
+            <!-- Notification count badge -->
+          </button>
+          
+          <!-- Take Assessment CTA Button -->
+          <button class="btn btn-primary" onclick="window.location.href='assessment.html'">
+            <!-- Primary action button - navigates to assessment page -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11H3v10h6V11zM21 3h-6v18h6V3zM15 7H9v14h6V7z"/>
+              <!-- Bar chart icon -->
+            </svg>
+            Take Assessment
+          </button>
+          
+          <!-- User Profile Section -->
+          <div class="user-profile">
+            <div class="user-avatar">
+              <!-- User avatar icon container -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <!-- Body outline -->
+                <circle cx="12" cy="7" r="4"/>
+                <!-- Head circle -->
+              </svg>
+            </div>
+            <span class="user-name">Anonymous</span>
+            <!-- Default username when not logged in -->
+          </div>
+        </div>
+      </header>
+      <!-- End of header -->
+
+      <!-- DASHBOARD CONTENT CONTAINER -->
+      <div class="dashboard-content">
+        <!-- Main scrollable content area -->
+        
+        <!-- PAGE HEADER WITH TITLE -->
+        <div class="page-header">
+          <h1 class="page-title">Security Tips</h1>
+          <!-- Main page heading -->
+          <p class="page-subtitle">Essential security practices and step-by-step guides to protect your digital assets</p>
+          <!-- Descriptive subtitle explaining page purpose -->
+        </div>
+
+        <!-- TIPS CONTAINER - Main layout wrapper for sidebar + content -->
+        <div class="tips-container">
+          
+          <!-- ========== CATEGORY SIDEBAR ========== -->
+          <div class="tips-sidebar">
+            <!-- Left sidebar containing category filters -->
+            
+            <!-- CATEGORY LIST - Filterable category navigation -->
+            <div class="category-list">
+              
+              <!-- All Tips Category (Default Active) -->
+              <div class="category-item active" onclick="filterCategory('all')">
+                <!-- Category item - onclick calls filterCategory function with 'all' parameter -->
+                <span class="category-icon">📚</span>
+                <!-- Book emoji representing all tips -->
+                <span class="category-name">All Tips</span>
+                <!-- Category label -->
+                <span class="category-count" id="count-all">12</span>
+                <!-- Count badge - updated dynamically via JavaScript -->
+              </div>
+              
+              <!-- Passwords Category -->
+              <div class="category-item" onclick="filterCategory('passwords')">
+                <!-- Filters to show only password-related tips -->
+                <span class="category-icon">🔑</span>
+                <!-- Key emoji for passwords -->
+                <span class="category-name">Passwords</span>
+                <span class="category-count" id="count-passwords">3</span>
+              </div>
+              
+              <!-- Network Category -->
+              <div class="category-item" onclick="filterCategory('network')">
+                <!-- Filters to show only network security tips -->
+                <span class="category-icon">🌐</span>
+                <!-- Globe emoji for network -->
+                <span class="category-name">Network</span>
+                <span class="category-count" id="count-network">3</span>
+              </div>
+              
+              <!-- Phishing Category -->
+              <div class="category-item" onclick="filterCategory('phishing')">
+                <!-- Filters to show only phishing awareness tips -->
+                <span class="category-icon">🎣</span>
+                <!-- Fishing hook emoji for phishing -->
+                <span class="category-name">Phishing</span>
+                <span class="category-count" id="count-phishing">2</span>
+              </div>
+              
+              <!-- Devices Category -->
+              <div class="category-item" onclick="filterCategory('devices')">
+                <!-- Filters to show only device security tips -->
+                <span class="category-icon">💻</span>
+                <!-- Laptop emoji for devices -->
+                <span class="category-name">Devices</span>
+                <span class="category-count" id="count-devices">2</span>
+              </div>
+              
+              <!-- Data Protection Category -->
+              <div class="category-item" onclick="filterCategory('data')">
+                <!-- Filters to show only data protection tips -->
+                <span class="category-icon">💾</span>
+                <!-- Floppy disk emoji for data -->
+                <span class="category-name">Data Protection</span>
+                <span class="category-count" id="count-data">2</span>
+              </div>
+            </div>
+            <!-- End of category list -->
+
+            <!-- QUICK TIPS SECTION - Condensed best practices -->
+            <div class="quick-tips">
+              <h4>💡 Quick Tips</h4>
+              <!-- Section heading with lightbulb emoji -->
+              
+              <!-- Quick Tip 1: Unique Passwords -->
+              <div class="quick-tip-item">
+                <span class="quick-tip-check">✓</span>
+                <!-- Green checkmark indicator -->
+                Use unique passwords for each account
+              </div>
+              
+              <!-- Quick Tip 2: Two-Factor Authentication -->
+              <div class="quick-tip-item">
+                <span class="quick-tip-check">✓</span>
+                Enable 2FA whenever possible
+              </div>
+              
+              <!-- Quick Tip 3: Software Updates -->
+              <div class="quick-tip-item">
+                <span class="quick-tip-check">✓</span>
+                Keep software up to date
+              </div>
+              
+              <!-- Quick Tip 4: Link Verification -->
+              <div class="quick-tip-item">
+                <span class="quick-tip-check">✓</span>
+                Verify links before clicking
+              </div>
+              
+              <!-- Quick Tip 5: Data Backups -->
+              <div class="quick-tip-item">
+                <span class="quick-tip-check">✓</span>
+                Back up important data regularly
+              </div>
+            </div>
+            <!-- End of quick tips -->
+          </div>
+          <!-- End of tips sidebar -->
+
+          <!-- ========== TIPS MAIN CONTENT AREA ========== -->
+          <div class="tips-main">
+            <!-- Main content area where tip cards are displayed -->
+            
+            <!-- SEARCH BOX -->
+            <div class="search-box">
+              <div class="search-wrapper">
+                <!-- Search icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <!-- Magnifying glass circle -->
+                  <path d="M21 21l-4.35-4.35"/>
+                  <!-- Magnifying glass handle -->
+                </svg>
+                <input type="text" class="search-input" placeholder="Search security tips..." onkeyup="searchTips(this.value)">
+                <!-- Search input field - onkeyup triggers searchTips function with current value -->
+              </div>
+            </div>
+
+            <!-- TIPS GRID - Container where tip cards are dynamically rendered -->
+            <div class="tips-grid" id="tips-grid">
+              <!-- Tips will be loaded here by JavaScript renderTips() function -->
+            </div>
+          </div>
+          <!-- End of tips main -->
+        </div>
+        <!-- End of tips container -->
+      </div>
+      <!-- End of dashboard content -->
+    </main>
+    <!-- End of main content -->
+  </div>
+  <!-- End of app container -->
+
+  <!-- ==================== JAVASCRIPT SECTION ==================== -->
+  <script>
+    // ============================================================
+    // SECURITY TIPS DATA ARRAY
+    // Contains all security tip objects with their properties
+    // Each tip has: id, category, icon, title, content, steps, difficulty, time
+    // ============================================================
+    const securityTips = [
+      // -------------------- PASSWORDS CATEGORY --------------------
+      {
+        id: 1,                              // Unique identifier for the tip
+        category: 'passwords',              // Category for filtering
+        icon: '🔐',                         // Display icon (emoji)
+        title: 'Create Strong Passwords',   // Tip title shown in card header
+        content: 'Strong passwords are your first line of defense. A good password should be at least 12 characters long and include a mix of uppercase, lowercase, numbers, and special characters.',
+        // Main description paragraph explaining the security tip
+        steps: [                            // Array of step-by-step instructions
+          'Use at least 12-16 characters',
+          'Mix uppercase and lowercase letters',
+          'Include numbers and special characters (!@#$%)',
+          'Avoid personal information like birthdays',
+          'Consider using a passphrase instead'
+        ],
+        difficulty: 'Easy',                 // Difficulty level (Easy/Medium/Advanced)
+        time: '5 min'                       // Estimated completion time
+      },
+      {
+        id: 2,                              // Tip #2: Password Manager
+        category: 'passwords',
+        icon: '🔑',
+        title: 'Use a Password Manager',
+        content: 'Password managers securely store all your passwords in an encrypted vault. You only need to remember one master password to access all your other passwords.',
+        steps: [
+          'Choose a reputable password manager (1Password, Bitwarden, LastPass)',
+          'Create a strong master password',
+          'Install browser extensions for auto-fill',
+          'Import existing passwords',
+          'Enable 2FA for the password manager itself'
+        ],
+        difficulty: 'Medium',
+        time: '20 min'
+      },
+      {
+        id: 3,                              // Tip #3: Two-Factor Authentication
+        category: 'passwords',
+        icon: '📱',
+        title: 'Enable Two-Factor Authentication',
+        content: 'Two-factor authentication adds an extra layer of security by requiring something you know (password) and something you have (phone or security key).',
+        steps: [
+          'Go to security settings of your account',
+          'Look for "Two-Factor" or "2FA" option',
+          'Choose authenticator app over SMS when possible',
+          'Download an authenticator app (Google Authenticator, Authy)',
+          'Scan the QR code and save backup codes'
+        ],
+        difficulty: 'Easy',
+        time: '10 min'
+      },
+      // -------------------- NETWORK CATEGORY --------------------
+      {
+        id: 4,                              // Tip #4: Wi-Fi Security
+        category: 'network',
+        icon: '📶',
+        title: 'Secure Your Wi-Fi Network',
+        content: 'Your home Wi-Fi is a gateway to all your connected devices. Securing it prevents unauthorized access and protects your data from eavesdropping.',
+        steps: [
+          'Change the default router admin password',
+          'Use WPA3 or WPA2 encryption',
+          'Create a strong Wi-Fi password',
+          'Disable WPS (Wi-Fi Protected Setup)',
+          'Consider hiding your network name (SSID)'
+        ],
+        difficulty: 'Medium',
+        time: '15 min'
+      },
+      {
+        id: 5,                              // Tip #5: VPN Usage
+        category: 'network',
+        icon: '🛡️',
+        title: 'Use a VPN on Public Wi-Fi',
+        content: 'Public Wi-Fi networks are often unsecured, making it easy for attackers to intercept your data. A VPN encrypts your connection and protects your privacy.',
+        steps: [
+          'Choose a reputable VPN provider',
+          'Install the VPN app on your devices',
+          'Connect to the VPN before using public Wi-Fi',
+          'Verify the VPN is active (check your IP)',
+          'Enable auto-connect feature for known networks'
+        ],
+        difficulty: 'Easy',
+        time: '10 min'
+      },
+      {
+        id: 6,                              // Tip #6: Firewall Configuration
+        category: 'network',
+        icon: '🔥',
+        title: 'Configure Your Firewall',
+        content: 'Firewalls monitor and control network traffic based on security rules. They block suspicious connections and protect your system from network-based attacks.',
+        steps: [
+          'Ensure your system firewall is enabled',
+          'Review and update firewall rules regularly',
+          'Block unnecessary incoming connections',
+          'Enable logging for security monitoring',
+          'Consider a hardware firewall for additional protection'
+        ],
+        difficulty: 'Advanced',
+        time: '30 min'
+      },
+      // -------------------- PHISHING CATEGORY --------------------
+      {
+        id: 7,                              // Tip #7: Phishing Email Recognition
+        category: 'phishing',
+        icon: '📧',
+        title: 'Recognize Phishing Emails',
+        content: 'Phishing emails try to trick you into revealing sensitive information. Learning to identify them can protect you from fraud and data theft.',
+        steps: [
+          'Check the sender\'s email address carefully',
+          'Look for spelling and grammar errors',
+          'Hover over links before clicking to see the real URL',
+          'Be suspicious of urgent or threatening language',
+          'When in doubt, contact the organization directly'
+        ],
+        difficulty: 'Easy',
+        time: '5 min'
+      },
+      {
+        id: 8,                              // Tip #8: Link Verification
+        category: 'phishing',
+        icon: '🔗',
+        title: 'Verify Links Before Clicking',
+        content: 'Malicious links can lead to fake websites designed to steal your credentials or download malware. Always verify links before clicking.',
+        steps: [
+          'Hover over links to preview the URL',
+          'Check for HTTPS and the padlock icon',
+          'Look for misspellings in domain names',
+          'Use URL scanning tools when unsure',
+          'Type URLs directly instead of clicking links'
+        ],
+        difficulty: 'Easy',
+        time: '5 min'
+      },
+      // -------------------- DEVICES CATEGORY --------------------
+      {
+        id: 9,                              // Tip #9: Software Updates
+        category: 'devices',
+        icon: '🔄',
+        title: 'Keep Software Updated',
+        content: 'Software updates often include security patches that fix vulnerabilities. Keeping your software updated protects you from known exploits.',
+        steps: [
+          'Enable automatic updates for your OS',
+          'Update web browsers and extensions',
+          'Keep applications up to date',
+          'Update router firmware regularly',
+          'Remove software you no longer use'
+        ],
+        difficulty: 'Easy',
+        time: '15 min'
+      },
+      {
+        id: 10,                             // Tip #10: Device Locking
+        category: 'devices',
+        icon: '🔒',
+        title: 'Lock Your Devices',
+        content: 'Locking your devices when not in use prevents unauthorized physical access. This is especially important for mobile devices and laptops.',
+        steps: [
+          'Set up a strong PIN or password',
+          'Enable biometric authentication if available',
+          'Configure auto-lock after short idle time',
+          'Enable "Find My Device" features',
+          'Encrypt your device storage'
+        ],
+        difficulty: 'Easy',
+        time: '10 min'
+      },
+      // -------------------- DATA PROTECTION CATEGORY --------------------
+      {
+        id: 11,                             // Tip #11: Data Backup
+        category: 'data',
+        icon: '💾',
+        title: 'Backup Your Data Regularly',
+        content: 'Regular backups protect you from data loss due to ransomware, hardware failure, or accidental deletion. Follow the 3-2-1 backup rule.',
+        steps: [
+          'Keep 3 copies of your data',
+          'Store on 2 different types of media',
+          'Keep 1 copy offsite or in the cloud',
+          'Test your backups regularly',
+          'Automate the backup process'
+        ],
+        difficulty: 'Medium',
+        time: '30 min'
+      },
+      {
+        id: 12,                             // Tip #12: Secure Data Disposal
+        category: 'data',
+        icon: '🗑️',
+        title: 'Secure Data Disposal',
+        content: 'When disposing of old devices or files, ensure data is completely erased. Simply deleting files doesn\'t remove them permanently.',
+        steps: [
+          'Use secure erase tools for hard drives',
+          'Factory reset mobile devices before selling',
+          'Physically destroy storage media if needed',
+          'Shred physical documents with sensitive data',
+          'Request data deletion from services you no longer use'
+        ],
+        difficulty: 'Medium',
+        time: '20 min'
+      }
+    ];
+    // End of securityTips data array
+
+    // ============================================================
+    // STATE VARIABLES
+    // Track current filter state for category and search
+    // ============================================================
+    let currentCategory = 'all';    // Currently selected category filter ('all', 'passwords', 'network', etc.)
+    let searchQuery = '';           // Current search query string (lowercase)
+
+    // ============================================================
+    // FILTER CATEGORY FUNCTION
+    // Handles category selection from sidebar
+    // @param {string} category - Category identifier to filter by
+    // ============================================================
+    function filterCategory(category) {
+      currentCategory = category;   // Update current category state
+      
+      // Update active state - remove 'active' class from all category items
+      document.querySelectorAll('.category-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      // Add 'active' class to clicked category item
+      event.target.closest('.category-item').classList.add('active');
+      
+      renderTips();                 // Re-render tips with new filter
+    }
+
+    // ============================================================
+    // SEARCH TIPS FUNCTION
+    // Handles search input filtering
+    // @param {string} query - Search query from input field
+    // ============================================================
+    function searchTips(query) {
+      searchQuery = query.toLowerCase();  // Store lowercase for case-insensitive search
+      renderTips();                       // Re-render tips with search filter
+    }
+
+    // ============================================================
+    // RENDER TIPS FUNCTION
+    // Renders tip cards to the grid based on current filters
+    // Called when category changes, search changes, or on page load
+    // ============================================================
+    function renderTips() {
+      let filteredTips = securityTips;  // Start with all tips
+      
+      // Apply category filter if not showing all
+      if (currentCategory !== 'all') {
+        filteredTips = filteredTips.filter(tip => tip.category === currentCategory);
+      }
+      
+      // Apply search filter if search query exists
+      if (searchQuery) {
+        filteredTips = filteredTips.filter(tip => 
+          tip.title.toLowerCase().includes(searchQuery) ||      // Search in title
+          tip.content.toLowerCase().includes(searchQuery) ||    // Search in content
+          tip.steps.some(step => step.toLowerCase().includes(searchQuery)) // Search in steps
+        );
+      }
+      
+      // Get reference to the tips grid container
+      const grid = document.getElementById('tips-grid');
+      
+      // Show empty state message if no tips match filters
+      if (filteredTips.length === 0) {
+        grid.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>No tips found matching your criteria.</p>
+          </div>
+        `;
+        return;  // Exit early
+      }
+
+      // Generate HTML for each tip card using template literals
+      grid.innerHTML = filteredTips.map(tip => `
+        <!-- Tip Card - data-category attribute used for potential future filtering -->
+        <div class="tip-card" data-category="${tip.category}">
+          <!-- Card Header: Icon and Title -->
+          <div class="tip-header">
+            <div class="tip-icon">${tip.icon}</div>
+            <div>
+              <div class="tip-title">${tip.title}</div>
+              <span class="tip-category-tag">${tip.category}</span>
+            </div>
+          </div>
+          <!-- Main content paragraph -->
+          <p class="tip-content">${tip.content}</p>
+          <!-- Steps section with numbered list -->
+          <div class="tip-steps">
+            <h4>Steps to Follow</h4>
+            ${tip.steps.map((step, i) => `
+              <div class="tip-step">
+                <span class="step-number">${i + 1}</span>
+                <span class="step-text">${step}</span>
+              </div>
+            `).join('')}
+          </div>
+          <!-- Footer with metadata (difficulty and time) -->
+          <div class="tip-footer">
+            <div class="tip-meta">
+              <!-- Difficulty indicator with sun/brightness icon -->
+              <div class="tip-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+                ${tip.difficulty}
+              </div>
+              <!-- Time estimate indicator with clock icon -->
+              <div class="tip-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                ${tip.time}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');  // Join all tip card HTML strings into one string
+    }
+
+    // ============================================================
+    // UPDATE COUNTS FUNCTION
+    // Updates the count badges in the category sidebar
+    // Called on page initialization
+    // ============================================================
+    function updateCounts() {
+      // Total count of all tips
+      document.getElementById('count-all').textContent = securityTips.length;
+      // Count tips by category using filter
+      document.getElementById('count-passwords').textContent = securityTips.filter(t => t.category === 'passwords').length;
+      document.getElementById('count-network').textContent = securityTips.filter(t => t.category === 'network').length;
+      document.getElementById('count-phishing').textContent = securityTips.filter(t => t.category === 'phishing').length;
+      document.getElementById('count-devices').textContent = securityTips.filter(t => t.category === 'devices').length;
+      document.getElementById('count-data').textContent = securityTips.filter(t => t.category === 'data').length;
+    }
+
+    // ============================================================
+    // GET RISK CLASS FUNCTION
+    // Returns CSS class based on risk level string
+    // @param {string} riskLevel - Risk level text from API
+    // @returns {string} - CSS class name (low/medium/high)
+    // ============================================================
+    function getRiskClass(riskLevel) {
+      if (riskLevel.includes('Low')) return 'low';        // Green styling
+      if (riskLevel.includes('Moderate')) return 'medium'; // Yellow styling
+      return 'high';                                       // Red styling for high risk
+    }
+
+    // ============================================================
+    // LOAD DASHBOARD DATA FUNCTION
+    // Fetches security score data from API and updates sidebar
+    // Async function that calls /api/dashboard endpoint
+    // ============================================================
+    async function loadDashboardData() {
+      try {
+        // Fetch dashboard data from server API
+        const response = await fetch('/api/dashboard');
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Update score number display
+          document.getElementById('score-number').textContent = data.overallScore;
+          
+          // Update circular progress indicator
+          const scoreCircle = document.getElementById('score-circle');
+          // Calculate stroke-dashoffset: 314 = full circumference (2πr where r=50)
+          // offset = circumference - (circumference * score / 100)
+          const offset = 314 - (314 * data.overallScore / 100);
+          scoreCircle.style.strokeDashoffset = offset;
+
+          // Update risk level label with appropriate styling class
+          const riskLabel = document.getElementById('risk-label');
+          riskLabel.textContent = data.riskLevel;
+          riskLabel.className = 'risk-label ' + getRiskClass(data.riskLevel);
+        }
+      } catch (error) {
+        // Log error but don't break the page - dashboard data is optional
+        console.log('Could not load dashboard data');
+      }
+    }
+
+    // ============================================================
+    // PAGE INITIALIZATION
+    // Called when script loads - sets up initial page state
+    // ============================================================
+    updateCounts();       // Populate category count badges
+    renderTips();         // Render all tips initially
+    loadDashboardData();  // Load security score from API
+  </script>
+  <!-- End of JavaScript section -->
+</body>
+</html>
