@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeStart Dashboard - Class Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .mermaid {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        /* Make the diagram bigger */
+        .mermaid svg {
+            max-width: none !important;
+            width: 1400px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="mermaid">
+classDiagram
+    class Server {
+        +Express app
+        +initDatabase()
+        +GET /api/questions
+        +GET /api/results
+        +GET /api/results/:id
+        +POST /api/results
+        +DELETE /api/results/:id
+    }
+
+    class Database {
+        -SQL.Database db
+        -string DB_PATH
+        +initDatabase()
+        +saveDatabase()
+        +seedDatabase()
+        +getAllSectionsWithQuestions()
+        +saveResult(data)
+        +getAllResults()
+        +getResultById(id)
+        +deleteResult(id)
+        +getTotalQuestionCount()
+    }
+
+    class Section {
+        +string id
+        +string title
+        +string description
+        +string icon
+        +int sort_order
+        +Question[] questions
+    }
+
+    class Question {
+        +int id
+        +string section_id
+        +string text
+        +Option[] options
+        +int sort_order
+    }
+
+    class Option {
+        +string label
+        +int score
+    }
+
+    class Result {
+        +int id
+        +string user_name
+        +Object answers
+        +int overall_score
+        +string risk_level
+        +SectionScore[] section_scores
+        +DateTime completed_at
+    }
+
+    class SectionScore {
+        +string sectionId
+        +string title
+        +int score
+        +int completed
+        +int total
+    }
+
+    class AssessmentUI {
+        +Section[] sections
+        +Question[] allQuestions
+        +int currentIndex
+        +Object answers
+        +loadQuestions()
+        +updateUI()
+        +selectOption(questionId, score)
+        +nextQuestion()
+        +previousQuestion()
+        +calculateData()
+        +submitAssessment()
+    }
+
+    Server --> Database : uses
+    Database --> Section : manages
+    Database --> Question : manages
+    Database --> Result : stores
+    Section "1" --> "*" Question : contains
+    Question "1" --> "*" Option : has
+    Result "1" --> "*" SectionScore : contains
+    AssessmentUI --> Server : fetches/submits
+    AssessmentUI --> Section : displays
+    AssessmentUI --> Question : iterates
+    </div>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default'
+        });
+    </script>
+</body>
+</html>

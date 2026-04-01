@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeStart Assessment Flow - Sequence Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .mermaid {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        /* Make the diagram bigger */
+        .mermaid svg {
+            max-width: none !important;
+            width: 1200px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant B as Browser
+    participant S as Server (Express)
+    participant DB as Database (SQLite)
+
+    U->>B: Open assessment.html
+    B->>S: GET /api/questions
+    S->>DB: getAllSectionsWithQuestions()
+    DB-->>S: Sections & Questions (20)
+    S-->>B: JSON response
+    B->>B: Shuffle questions randomly
+    B->>U: Display Question 1
+
+    loop For each question (1-20)
+        U->>B: Select answer option
+        B->>B: Store answer locally
+        B->>B: Calculate score
+        U->>B: Click Next
+        B->>U: Display next question
+    end
+
+    U->>B: Click "Generate Report"
+    B->>S: POST /api/results
+    S->>DB: saveResult(answers, scores)
+    DB-->>S: Result ID
+    S-->>B: Success response
+    B->>U: Redirect to results.html
+
+    U->>B: View results page
+    B->>S: GET /api/results/:id
+    S->>DB: getResultById(id)
+    DB-->>S: Assessment result
+    S-->>B: JSON response
+    B->>U: Display scores & recommendations
+    </div>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            sequence: {
+                diagramMarginX: 50,
+                diagramMarginY: 30,
+                actorMargin: 80,
+                width: 200,
+                height: 65,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 45
+            }
+        });
+    </script>
+</body>
+</html>
